@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xml:lang="en" lang="en">
+<head>
+<title>test</title>
+<link rel="stylesheet" href="loadfile.css">
+<link rel="stylesheet" href="browse.css">
+</head>
+<body>
+<div id="header"></div><div id="container">
+<h1>Online ARM Editor</h1>
+
+<table>
+	<tr>
+		<td><form action="" id="formsubmit" method = "post">
+				<textarea name = "formContent" id = "formContent" style="display:none;"></textarea>
+				<input type="submit"  name="submit" value="Run" id = "submit" class="btn btn-primary" onClick = "getEditorContent()">
+					<input type="button" onclick="resetEditor()" id="Reset" class="btn btn-primary" name="Reset" value="Reset">
+
+			
+			
+			<td><input id="inputFileNameToSaveAs"></input></td>
+		<td><input type="button" onclick="saveTextAsFile()" name="Save code to File" value="Save code to file" class="btn btn-primary"></td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			
+			<div id="inputTextToSave" value="savethistext" style="width:630px;height:450px"></div>
+			
+		</td>
+		<td><div><textarea name ="outputText" id ="outputText" placeholder="Output here.." style="width:630px;height:325px;border: 2px solid #428bca"></textarea><br>
+		
+		<textarea name="inputs" id="inputs" style="width:630px;height:100px;border: 2px solid #428bca" placeholder="Input here.."></textarea></div></td></form>
+	</tr>
+	
+	<tr>
+		
+		<td><input id="uploadFile" placeholder="Choose File" disabled="disabled" />
+<div class="fileUpload btn btn-primary">
+    <span>Select File</span>
+    <input id="uploadBtn" type="file" class="upload" />
+</div></td>
+		<td><div><input type ="button" onclick="loadFileAsText()" class="fileUpload btn btn-primary" name="Load Selected File" value="Upload File"></div>
+		</td>
+	</tr>
+	
+</table>
+
+<script src="ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="ajaxscript.js"></script>
+<script>
+    var editor = ace.edit("inputTextToSave");
+    editor.setTheme("ace/theme/idle_fingers");
+    editor.getSession().setMode("ace/mode/arm");
+    
+
+</script>
+<script type="text/javascript">function getEditorContent(){
+	document.getElementById("formContent").innerHTML =  editor.getValue();}
+</script>
+<script type='text/javascript'>
+
+function saveTextAsFile()
+{
+	document.getElementById("formContent").innerHTML =  editor.getValue();
+	var textToWrite = document.getElementById("formContent").value;
+	var textFileAsBlob = new Blob([textToWrite], {type:'text/plain;charset=utf-8'});
+	var fileNameToSaveAs = document.getElementById("inputFileNameToSaveAs").value;
+	
+	var downloadLink = document.createElement("a");
+	downloadLink.download = fileNameToSaveAs;
+	downloadLink.innerHTML = "Download File";
+	if (window.webkitURL != null)
+	{
+		// Chrome allows the link to be clicked
+		// without actually adding it to the DOM.
+		downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+	}
+	else
+	{
+		// Firefox requires the link to be added to the DOM
+		// before it can be clicked.
+		downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+		downloadLink.onclick = destroyClickedElement;
+		downloadLink.style.display = "none";
+		document.body.appendChild(downloadLink);
+	}
+
+	downloadLink.click();
+}
+
+function resetEditor()
+{
+	var editor = ace.edit("inputTextToSave");
+	editor.getSession().setValue("");
+		document.getElementById("outputText").value = "";
+		document.getElementById("inputs").value = "";
+}
+
+
+function destroyClickedElement(event)
+{
+	document.body.removeChild(event.target);
+}
+
+document.getElementById("uploadBtn").onchange = function () {
+    document.getElementById("uploadFile").value = this.value;
+};
+
+
+function loadFileAsText()
+{
+	var fileToLoad = document.getElementById("uploadBtn").files[0];
+
+	var fileReader = new FileReader();
+	fileReader.onload = function(fileLoadedEvent) 
+	{
+		inputTextToSave.getSelectedText = function() {
+    this.session.getTextRange(this.getSelectionRange())
+} 
+		var textFromFileLoaded = fileLoadedEvent.target.result;
+		editor.setValue(textFromFileLoaded);
+	};
+	fileReader.readAsText(fileToLoad, "UTF-8");
+}
+
+</script>
+
+</body>
+</html>
