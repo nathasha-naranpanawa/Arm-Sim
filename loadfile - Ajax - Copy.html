@@ -27,9 +27,9 @@
 			<div id="inputTextToSave" value="savethistext" style="width:630px;height:450px"></div>
 			
 		</td>
-		<td><div><textarea name ="outputText" id ="outputText" style="width:630px;height:325px;border: 2px solid #428bca">Output is shown here...</textarea><br>
+		<td><div><textarea name ="outputText" id ="outputText" placeholder="Output here.." style="width:630px;height:325px;border: 2px solid #428bca"></textarea><br>
 		
-		<textarea name="inputs" id="inputs" style="width:630px;height:100px;border: 2px solid #428bca">Input your values here...</textarea></div></td></form>
+		<textarea name="inputs" id="inputs" style="width:630px;height:100px;border: 2px solid #428bca" placeholder="Input here.."></textarea></div></td></form>
 	</tr>
 	
 	<tr>
@@ -89,8 +89,8 @@ function resetEditor()
 {
 	var editor = ace.edit("inputTextToSave");
 	editor.getSession().setValue("");
-		document.getElementById("outputText").value = "Output is shown here...";
-		document.getElementById("inputs").value = "Input your values here...";
+		document.getElementById("outputText").value = "";
+		document.getElementById("inputs").value = "";
 }
 
 
