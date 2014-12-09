@@ -20,6 +20,10 @@ var commands = new Hash('exfunction',new exfunction(),'sub',new sub(),'add',new 
 
 //var addr = new Hash('0x000000','00 00 00 00','0x000018','00 00 00 00','0x000024','00 00 00 00');
 
+var copyReg = new Hash();
+var copyReg2 = new Hash();
+
+var copyStack = newFilledArray();
 
 var functionsHash = new Hash();
 
@@ -178,14 +182,23 @@ function ldr(){
 			else{
 				//document.getElementById("outputText").innerHTML ='this is not reg';
 				var index2=args[2];
-				registers.setItem(args[1],dataLabels.getItem(index2));
+				alert(index2);
+				memory[countmem]=(dataLabels.getItem(index2));
+
+				//put the address of the data memory where the label is at into the register
+				registers.setItem(args[1],countmem);
+
+				//registers.setItem(args[1],dataLabels.getItem(index2));
+				//alert(str2ascii(dataLabels.getItem(index2)));
+
 				//addr.setItem('0x000024',index2);
 				//memory[2]=str2hex(data.getItem(index2));
 				//alert(data.getItem(index2));
-				memory[countmem]=(dataLabels.getItem(index2));
+
+				//increment data memory hash for the next label
 				countmem +=1;
 				
-			}		
+			}			
 	}
 }
 //-----------------------------------------------------------------------------------------------------
