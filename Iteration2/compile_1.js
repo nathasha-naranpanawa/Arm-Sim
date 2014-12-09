@@ -84,9 +84,12 @@ function lineByLine()
 		//Function to simulate the code 
 		copyEditor(splitLine);
 		instCount+=1; //number of instructions executed
+		//alert(instCount);
+		document.getElementById("inst").value =  instCount;
 		state+=1;
 		
 }
+
 
 
 
@@ -188,7 +191,7 @@ function showRegisters(){     //-------------> working
 		
 
 		//num = dec2hex(j);
-		string4=string4+dec2hex(k)+" : " + stack[k] + "\n";
+		string4=string4+dec2hex(k)+" : " + stack[k]+ "\n";
 		k +=4;
 		
 	}
@@ -306,7 +309,7 @@ function initialize(){   //-------------> working
 	registers.setItem('r10',num);
 	registers.setItem('r11',num);
 	registers.setItem('r12',num);
-	registers.setItem('sp',999);
+	registers.setItem('sp',8);
 	registers.setItem('lr',234);
 	registers.setItem('pc',34);
 
