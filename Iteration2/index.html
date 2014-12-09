@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html xml:lang="en" lang="en">
+<head>
+<title>Online ARM simulator</title>
+
+<link rel="stylesheet" href="loadfile.css">
+<link rel="stylesheet" href="browse.css">
+
+</head>
+
+<body onload="showRegisters()">
+<div id="header"></div><div id="container">
+<h1>Armdroid</h1>
+
+
+<table>
+	<tr>
+		<td><form action="" id="formsubmit" method = "post">
+				<textarea name = "formContent" id = "formContent" style="display:none;"></textarea>
+				<input type="submit"  name="submit" value="Run" id = "submit" class="btn btn-primary" onClick = "getEditorContent()">
+					<input type="button" onclick="resetEditor()" id="Reset" class="btn btn-primary" name="Reset" value="Reset">	
+					
+	</tr>
+	<tr>
+		<td colspan="3">
+			<div id="inputTextToSave" value="savethistext" style="width:630px;height:450px"></div>
+		</td>
+		<td><div><textarea readonly name ="outputText" id ="outputText" style="width:300px;height:325px;border: 2px solid #428bca" placeholder = "Output here..."></textarea><br>
+				 <textarea name="inputs" id="inputs" style="width:300px;height:100px;border: 2px solid #428bca" placeholder = "Input your values here..."></textarea></div>
+		</td>
+		
+		</form>
+	</tr>
+	
+	<tr>
+		
+		<td><input type="file" class="custom-file-input" id="fileToLoad"></td>
+		<td><input type ="button" onclick="loadFileAsText()" class="btn btn-primary" name="Upload File" value="Upload File"></td>
+		<td><input type="button" onclick="lineByLine()" id="StepByStep" class="btn btn-primary" name="StepByStep" value="Step by step"></td>
+		<td >
+				 	<input type="radio" name="format" value="Hex" id="Hex"  onClick="fromRadio()">Hex
+				<input type="radio" name="format" value="Decimal"  id="Decimal"  checked onClick="fromRadio()">Decimal
+				<input type="radio" name="format" value="Binary" id="Binary" onClick="fromRadio()">Binary
+				 </td>
+	</tr>
+	
+	<tr>
+		<td><fieldset>
+			<legend>Registers</legend>
+			<textarea readonly name ="outputregisters" id ="outputregisters" style="width:200px;height:440px;border: 2px solid #428bca" ></textarea>
+		</fieldset>
+		</td>
+		<td><fieldset>
+			<legend>Data memory</legend>
+			<textarea name="memory" id="memory" style="width:200px;height:440px;border: 2px solid #428bca" placeholder = "Memory shown here..."></textarea>
+		</fieldset>
+		</td>	
+		<td>
+			<fieldset>
+			<legend>Stack memory</legend>
+			<textarea name="stack" id="stack" style="width:200px;height:440px;border: 2px solid #428bca" placeholder = "Stack memory shown here..."></textarea>
+			</fieldset>
+		</td>
+		<td>
+			<fieldset>
+			<legend>Instruction memory</legend>
+			<textarea name="Instr" id="Instr" style="width:400px;height:440px;border: 2px solid #428bca" placeholder = "Instruction memory shown here..."></textarea>
+			</fieldset>
+		</td>
+	</tr>
+	
+</table>
+
+<script src="ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="jquery.min.js"></script>
+<script src="ajaxscript.js"></script>
+<script src="compile_1.js"></script>
+<script src="Hash.js"></script>
+<script src="functions_1.js"></script>
+
+<script>
+    var editor = ace.edit("inputTextToSave");
+    editor.setTheme("ace/theme/idle_fingers");
+    editor.getSession().setMode("ace/mode/arm");
+</script>
+
+<script type="text/javascript">function getEditorContent(){
+	document.getElementById("formContent").innerHTML =  editor.getValue();}
+</script>
+
+<script type='text/javascript'>
+function resetEditor()
+{
+	var editor = ace.edit("inputTextToSave");
+	editor.getSession().setValue("");
+		document.getElementById("outputText").value = "";
+		document.getElementById("inputs").value = "";
+		
+	initialize();
+}
+
+
+function destroyClickedElement(event)
+{
+	document.body.removeChild(event.target);
+}
+
+function loadFileAsText()
+{
+	var fileToLoad = document.getElementById("fileToLoad").files[0];
+
+	var fileReader = new FileReader();
+	fileReader.onload = function(fileLoadedEvent) 
+	{
+		inputTextToSave.getSelectedText = function() {
+    this.session.getTextRange(this.getSelectionRange())
+} 
+		var textFromFileLoaded = fileLoadedEvent.target.result;
+		editor.setValue(textFromFileLoaded);
+	};
+	fileReader.readAsText(fileToLoad, "UTF-8");
+	
+	initialize();
+}
+
+</script>
+
+<!--s<script type='text/javascript'>
+function lineByLine()
+{
+
+	//Storing code lines in an array
+	var editorContent=editor.getValue();
+	var codeLines = editorContent.split("\n");
+	//alert("okay");
+    /*if(/mov/.test(tt))
+	{
+		alert(/#[0-9]+/.exec(tt));
+	}*/
+	  
+	var lineNumber = 6; 
+	for(var i=0; i<lineNumber; i++){
+		//document.getElementById("outputText").innerHTML = codeLines[2];
+		alert(codeLines[i]);
+	}
+	
+	
+	
+	
+	
+}
+</script>-->
+
+
+
+</body>
+</html>
