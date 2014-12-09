@@ -10,6 +10,7 @@ var state = 0;  //Stores state regarding the current line to be executed
 var startLine; //Place where main: starts
 var pcVal = 34;
 var instCount = 0; //Keeps track of the number of instructions executed
+var currentInstruction="";
 
 function lineByLine()
 {
@@ -293,7 +294,13 @@ function getLabels(codes){   //-----------> working
 
 //Initialize the registers
 function initialize(){   //-------------> working
-	
+	instCount =0;
+	document.getElementById("inst").value =  instCount;
+	document.getElementById("currentInstr").value =  "";
+	//document.getElementById("Hex").reset();
+	//document.getElementById("Decimal").reset();
+	//document.getElementById("Binary").reset();
+
 	var num = 0;
 	
 	registers.setItem('r0',num);
@@ -319,6 +326,10 @@ function initialize(){   //-------------> working
 
 	for(j=0;j<stack.length;j++){
 		stack[j]=0;
+	}
+
+	for(p=0;p<instrMem.length;p++){
+		instrMem[p] = "00000000000000000000000000000000" ;
 	}
 
 	state = 0;
