@@ -193,6 +193,8 @@ function showRegisters(){     //-------------> working
 		
 	}
 		document.getElementById("stack").innerHTML =string4;
+		copyStack = stack ;
+
 
 		string5="";
 	var l=0;
@@ -207,7 +209,55 @@ function showRegisters(){     //-------------> working
 		document.getElementById("Instr").innerHTML =string5;
 
 
-}	
+};
+//----------------------------------------------------------------------------------------------------------
+function showCopyRegisters(){     //-------------> working
+
+	var regs=['r0','r1','r2','r3','r4','r5','r6','r7','r8','r9','r10','r11','r12','sp','lr','pc'];
+	var string="";
+	for(i=0;i<regs.length;i++){
+		string=string+regs[i]+" = "+copyReg.getItem(regs[i])+"\n";
+	}
+	document.getElementById("outputregisters").innerHTML =string;	
+
+	
+
+	string3="";
+	for(j=0;j<memory.length;j++){
+
+		//num = dec2hex(j);
+		string3=string3+dec2hex(j)+" : " + memory[j] + "\n";
+		
+	}
+		document.getElementById("memory").innerHTML =string3;
+
+		string4="";
+	var k=0;
+	while(k<stack.length-4){
+		
+
+		//num = dec2hex(j);
+		string4=string4+dec2hex(k)+" : " + stack[k] + "\n";
+		k +=4;
+		
+	}
+		document.getElementById("stack").innerHTML =string4;
+		copyStack = stack ;
+
+		string5="";
+	var l=0;
+	while(l<instrMem.length-4){
+		
+
+		//num = dec2hex(j);
+		string5=string5+l+" : " + instrMem[l] + "\n";
+		l +=1;
+		
+	}
+		document.getElementById("Instr").innerHTML =string5;
+
+
+};	
 
 
 
