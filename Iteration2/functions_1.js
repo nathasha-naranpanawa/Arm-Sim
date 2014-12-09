@@ -1,8 +1,11 @@
 
 //-------------------------------------------------------------------------------------------------------------------------------------
-var memory=newFilledArray(10000, 0);
-var stack = newFilledArray(1000,0);
+var memory=newFilledArray(100, 0);
+//var words = newFilledArray(4,0);
+//var stack = newFilledArray(100,newFilledArray(4,0));
+var stack = newFilledArray(100,0);
 var instrMem = newFilledArray(1000, "0000 0000 0000 0000 0000 0000 0000 0000");
+
 
 var dataLabels = new Hash ();
 
@@ -10,9 +13,10 @@ var dataLabels = new Hash ();
 
 //data memory index
 
+var stackPointer;
 var countmem = 0;
 
-var registers=new Hash('r0',0,'r1',0,'r2',0,'r3',0,'r4',0,'r5',0,'r6',0,'r7',0,'r8',0,'r9',0,'r10',0,'r11',0,'r12',0,'sp',999, 'lr',234,'pc',34);
+var registers=new Hash('r0',0,'r1',0,'r2',0,'r3',0,'r4',0,'r5',0,'r6',0,'r7',0,'r8',0,'r9',0,'r10',0,'r11',0,'r12',0,'sp',8, 'lr',234,'pc',34);
 
 var convertRegName=new Hash('r0',"0000",'r1',"0001",'r2',"0010",'r3',"0011",'r4',"0100",'r5',"0101",'r6',"0110",'r7',"0111",'r8',"1000",'r9',"1001",'r10',"1010",'r11',"1011",'r12',"1100",'sp',"1101", 'lr',"1110",'pc',"1111");
 
@@ -121,10 +125,17 @@ function str(){
 	
 		//alert(registers.getItem(args[2]));
 		//alert((args[3]));
-		//alert(args[3]);
+		alert(args[3]);
 		if (args[2]=="sp"){
-			var index3 = dec2hex(args[3]);
+			//var index3 = dec2hex(args[3]);
+			var index3 = registers.getItem("sp");
+			stackPointer = index3;
+			alert(index3);
+			//var wrd = newFilledArray(4,0);
+			//if (args[3]==0){ wrd[0] = registers.getItem(args[1]);}
+			//stack[index3]= wrd;
 			stack[index3]=registers.getItem(args[1]);
+			//alert(stack[index3]);
 		}else{
 		var index=parseInt(registers.getItem(args[2]))+parseInt(args[3]);
 		memory[index]=registers.getItem(args[1]);
@@ -158,8 +169,10 @@ function ldr(){
 			if(isReg(args)){
 				//document.getElementById("outputText").innerHTML ='this is reg';
 				if(args[2]=="sp"){
-				var index4=parseInt(args[3]);	
-				registers.setItem(args[1],stack[index4]);
+				//alert(args[3]);	
+				//var index4=parseInt(args[3]);	
+				//alert(index4);
+				registers.setItem(args[1],stack[stackPointer]);
 				}else{
 				var index1=parseInt(registers.getItem(args[2]))+parseInt(args[3]);
 				registers.setItem(args[1],memory[index1]);
@@ -182,7 +195,7 @@ function ldr(){
 			else{
 				//document.getElementById("outputText").innerHTML ='this is not reg';
 				var index2=args[2];
-				alert(index2);
+				//alert(index2);
 				memory[countmem]=(dataLabels.getItem(index2));
 
 				//put the address of the data memory where the label is at into the register
@@ -231,8 +244,10 @@ function mov(){   //------------------------> working
 		var Rn = "0000";
 		instruction = dataProcess(I, Rn, Rd, operand2, "1101")
 		instrMem[instCount] = instruction;
+
 		//------------------------
 	}
+
 }
 //-------------------------------------------------------------------------------------------------------------------------------
 function bl(){
@@ -562,7 +577,21 @@ function signExtend(str){    //------------------------> working
 
 //-----------------------------------------------------------------------------
 
+function putWords(arg,val){
+	for(i=0;i<words.length;i++){
+		if (args==0){
+			words[0] = val;
+		}else if (args==1){
+			words[1] = val;
+		}else if (args==2){
+			words[2] = val;
+		}else{
+			words[3] = val;
+		}
+	}
+	return words;
 
+};
 
 
 
