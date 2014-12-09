@@ -6,7 +6,13 @@
 
 <link rel="stylesheet" href="loadfile.css">
 <link rel="stylesheet" href="browse.css">
-
+<style>
+input[type=button]:disabled {
+	border-color: #707070;
+    background: #707070;
+}
+}
+</style>
 </head>
 
 <body onload="showRegisters()">
@@ -27,8 +33,8 @@
 		<td colspan="3">
 			<div id="inputTextToSave" value="savethistext" style="width:630px;height:450px"></div>
 		</td>
-		<td><div><textarea readonly name ="outputText" id ="outputText" style="width:300px;height:325px;border: 2px solid #428bca" placeholder = "Output here..."></textarea><br>
-				 <textarea name="inputs" id="inputs" style="width:300px;height:100px;border: 2px solid #428bca" placeholder = "Input your values here..."></textarea></div>
+		<td><div><textarea readonly name ="outputText" id ="outputText" style="width:430px;height:325px;border: 2px solid #428bca" placeholder = "Output here..."></textarea><br>
+				 <textarea name="inputs" id="inputs" style="width:430px;height:100px;border: 2px solid #428bca" placeholder = "Input your values here..."></textarea></div>
 		</td>
 		
 		</form>
@@ -39,13 +45,14 @@
 		<td><input type="file" class="custom-file-input" id="fileToLoad">
 		<td><input type ="button" onclick="loadFileAsText()" class="btn btn-primary" name="Upload File" value="Upload File">
 		<td><input type="button" onclick="lineByLine()" id="StepByStep" class="btn btn-primary" name="StepByStep" value="Step by step"></td>
-		<td><input type="button" onclick="" id="Initialize" class="btn btn-primary" name="Initialize" value="Initialize">
+			
 
-				<label for="inst">Instruction Count</label>
+				<td><label for="inst">Instruction Count</label>
 				<input type="text" name="inst" id="inst" style="width:20px;height:20px;border-radius:5px">	
 				<input type="radio" name="format" value="Hex" id="Hex"  onClick="convert2hex()">Hex
 				<input type="radio" name="format" value="Decimal"  id="Decimal"  checked onClick="convert2decimal()">Decimal
 				<input type="radio" name="format" value="Binary" id="Binary" onClick="convert2binary()">Binary
+				<input type="button" onclick="resetRegsnMem()" id="Initialize" class="btn btn-primary" name="Initialize" value="Initialize">
 				
 					
        			 
@@ -72,7 +79,12 @@
 		<td>
 			<fieldset>
 			<legend>Instruction memory</legend>
-			<textarea name="Instr" id="Instr" style="width:400px;height:440px;border: 2px solid #428bca" placeholder = "Instruction memory shown here..."></textarea>
+			<textarea name="Instr" id="Instr" style="width:400px;height:380px;border: 2px solid #428bca" placeholder = "Instruction memory shown here..."></textarea>
+			</fieldset>
+		
+			<fieldset>
+			<legend>Current Instruction</legend>
+			<textarea name="currentInstr" id="currentInstr" style="width:400px;height:20px;border: 2px solid #428bca" placeholder = "Current Instruction shown here..."></textarea>
 			</fieldset>
 		</td>
 	</tr>
@@ -101,13 +113,19 @@
 </script>
 
 <script type='text/javascript'>
+
+function resetRegsnMem(){
+	document.getElementById("StepByStep").disabled = false;
+	initialize();
+}
+
 function resetEditor()
 {
 	var editor = ace.edit("inputTextToSave");
 	editor.getSession().setValue("");
 		document.getElementById("outputText").value = "";
 		document.getElementById("inputs").value = "";
-		
+		document.getElementById("StepByStep").disabled = false;
 	initialize();
 }
 
