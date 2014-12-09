@@ -38,11 +38,13 @@
 		<td><input type="file" class="custom-file-input" id="fileToLoad"></td>
 		<td><input type ="button" onclick="loadFileAsText()" class="btn btn-primary" name="Upload File" value="Upload File"></td>
 		<td><input type="button" onclick="lineByLine()" id="StepByStep" class="btn btn-primary" name="StepByStep" value="Step by step"></td>
-		<td >
-				 	<input type="radio" name="format" value="Hex" id="Hex"  onClick="fromRadio()">Hex
-				<input type="radio" name="format" value="Decimal"  id="Decimal"  checked onClick="fromRadio()">Decimal
-				<input type="radio" name="format" value="Binary" id="Binary" onClick="fromRadio()">Binary
-				 </td>
+		<td><input type="button" onclick="" id="Initialize" class="btn btn-primary" name="Initialize" value="Initialize">
+
+		
+				 	<input type="radio" name="format" value="Hex" id="Hex"  onClick="convert2hex()">Hex
+				<input type="radio" name="format" value="Decimal"  id="Decimal"  checked onClick="convert2decimal()">Decimal
+				<input type="radio" name="format" value="Binary" id="Binary" onClick="convert2binary()">Binary
+		</td>
 	</tr>
 	
 	<tr>
@@ -78,6 +80,8 @@
 <script src="compile_1.js"></script>
 <script src="Hash.js"></script>
 <script src="functions_1.js"></script>
+<script src="conversions.js"></script>
+<script src="radio.js"></script>
 
 <script>
     var editor = ace.edit("inputTextToSave");
