@@ -4,7 +4,7 @@ var memory=newFilledArray(100, 0);
 //var words = newFilledArray(4,0);
 //var stack = newFilledArray(100,newFilledArray(4,0));
 var stack = newFilledArray(100,0);
-var instrMem = newFilledArray(1000, "0000 0000 0000 0000 0000 0000 0000 0000");
+var instrMem = newFilledArray(1000, "00000000000000000000000000000000");
 
 
 var dataLabels = new Hash ();
@@ -20,7 +20,7 @@ var registers=new Hash('r0',0,'r1',0,'r2',0,'r3',0,'r4',0,'r5',0,'r6',0,'r7',0,'
 
 var convertRegName=new Hash('r0',"0000",'r1',"0001",'r2',"0010",'r3',"0011",'r4',"0100",'r5',"0101",'r6',"0110",'r7',"0111",'r8',"1000",'r9',"1001",'r10',"1010",'r11',"1011",'r12',"1100",'sp',"1101", 'lr',"1110",'pc',"1111");
 
-var commands = new Hash('exfunction',new exfunction(),'sub',new sub(),'add',new add(),'str',new str(),'ldr',new ldr(),'bl',new bl(),'mov',new mov(), 'cmp', new cmp(), 'branch', new branch());
+var commands = new Hash('exfunction',new exfunction(),'sub',new sub(),'add',new add(),'str',new str(),'ldr',new ldr(),'bl',new bl(),'mov',new mov(), 'cmp', new cmp(), 'branch', new branch(), 'b' , new b());
 
 //var addr = new Hash('0x000000','00 00 00 00','0x000018','00 00 00 00','0x000024','00 00 00 00');
 
@@ -61,6 +61,9 @@ function sub(){ //------------------------> working
 				var operand2 = signExtend(immediateToBin(args[3]));
 				var I = "1";
 				//-----------------------------
+
+				currentInstruction = "sub" + " " + args[1] + ", " + args[2] + ", " + "#" + args[3] ;
+				document.getElementById("currentInstr").value = currentInstruction;
 			}
 			else{
 				registers.setItem(args[1],registers.getItem(args[2])-registers.getItem(args[3]));
@@ -69,6 +72,9 @@ function sub(){ //------------------------> working
 				var operand2 = signExtend(convertRegName.getItem(args[3]));
 				var I = "0";
 				//-----------------------------
+
+				currentInstruction = "sub" + " " + args[1] + ", " + args[2] + ", "  + args[3] ;
+				document.getElementById("currentInstr").value = currentInstruction;
 			}
 			
 			//-----------------------------
@@ -97,6 +103,8 @@ function add(){	//------------------------> working
 				var operand2 = signExtend(immediateToBin(args[3]));
 				var I = "1";
 				//-----------------------------------------
+				currentInstruction = "add" + " " + args[1] + ", " + args[2] + ", " + "#" + args[3] ;
+				document.getElementById("currentInstr").value = currentInstruction;
 			}
 			else{
 				registers.setItem(args[1],registers.getItem(args[2])+registers.getItem(args[3]));
@@ -105,6 +113,8 @@ function add(){	//------------------------> working
 				var operand2 = signExtend(convertRegName.getItem(args[3]));
 				var I = "0";
 				//-----------------------------------------
+				currentInstruction = "add" + " " + args[1] + ", " + args[2] + ", " + args[3] ;
+				document.getElementById("currentInstr").value = currentInstruction;
 			}
 			
 				//-----------------------------------------
@@ -125,20 +135,27 @@ function str(){
 	
 		//alert(registers.getItem(args[2]));
 		//alert((args[3]));
-		alert(args[3]);
+		//alert(args[3]);
 		if (args[2]=="sp"){
 			//var index3 = dec2hex(args[3]);
 			var index3 = registers.getItem("sp");
 			stackPointer = index3;
-			alert(index3);
+			//alert(index3);
 			//var wrd = newFilledArray(4,0);
 			//if (args[3]==0){ wrd[0] = registers.getItem(args[1]);}
 			//stack[index3]= wrd;
 			stack[index3]=registers.getItem(args[1]);
 			//alert(stack[index3]);
+			currentInstruction = "str" + " " + args[1] + ", " + "[" + args[2] + ", " + "#" + args[3] + "]" ;
+			document.getElementById("currentInstr").value = currentInstruction;
+
+
 		}else{
-		var index=parseInt(registers.getItem(args[2]))+parseInt(args[3]);
-		memory[index]=registers.getItem(args[1]);
+			var index=parseInt(registers.getItem(args[2]))+parseInt(args[3]);
+			memory[index]=registers.getItem(args[1]);
+
+			currentInstruction = "str" + " " + args[1] + ", " + args[2] + ", "  + args[3] ;
+			document.getElementById("currentInstr").value = currentInstruction;
 		}
 		//memory[index]=registers.getItem(args[1]);
 		
@@ -150,6 +167,7 @@ function str(){
 		instruction = dataTrans(Rn, Rd, operand2, "011001");
 		instrMem[instCount] = instruction;
 		//-----------------------------------------
+		
 		
 		//addr.setItem('0x000000',index);
 
@@ -169,16 +187,20 @@ function ldr(){
 			if(isReg(args)){
 				//document.getElementById("outputText").innerHTML ='this is reg';
 				if(args[2]=="sp"){
-				//alert(args[3]);	
-				//var index4=parseInt(args[3]);	
-				//alert(index4);
-				registers.setItem(args[1],stack[stackPointer]);
+					//alert(args[3]);	
+					//var index4=parseInt(args[3]);	
+					//alert(index4);
+					registers.setItem(args[1],stack[stackPointer]);
+					currentInstruction = "ldr" + " " + args[1] + ", " + "[" + args[2] + ", " + "#" + args[3] +"]";
+					document.getElementById("currentInstr").value = currentInstruction;
 				}else{
-				var index1=parseInt(registers.getItem(args[2]))+parseInt(args[3]);
-				registers.setItem(args[1],memory[index1]);
-				//alert(registers.getItem(args[1]));
-				//alert(index1);
-				//addr.setItem('0x000018',index1);
+					var index1=parseInt(registers.getItem(args[2]))+parseInt(args[3]);
+					registers.setItem(args[1],memory[index1]);
+					//alert(registers.getItem(args[1]));
+					//alert(index1);
+					//addr.setItem('0x000018',index1);
+					currentInstruction = "ldr" + " " + args[1] + ", " + args[2] + ", "  + args[3] ;
+					document.getElementById("currentInstr").value = currentInstruction;
 				}
 				
 				//-----------------------------------------
@@ -210,6 +232,8 @@ function ldr(){
 
 				//increment data memory hash for the next label
 				countmem +=1;
+				currentInstruction = "ldr" + " " + args[1] + ", " + args[2] ;
+				document.getElementById("currentInstr").value = currentInstruction;
 				
 			}			
 	}
@@ -224,10 +248,20 @@ function mov(){   //------------------------> working
 		if(isRegForMov(args)){
 			//document.getElementById("outputText").innerHTML = args[2];
 			registers.setItem(args[1],parseInt(registers.getItem(args[2])));
+			//alert(registers.getItem(args[1]));
 			
 			//-----------------------------
 			var operand2 = signExtend(convertRegName.getItem(args[2]));
 			var I = "0";
+
+			currentInstruction = "mov" + " " + args[1] + ", " + args[2] ;
+			document.getElementById("currentInstr").value = currentInstruction;
+
+			if(((args[1])== "pc")&&((args[2])=="lr")){
+				
+				disableExecution();
+				
+			}
 			//-----------------------------
 		}
 		else{
@@ -237,6 +271,8 @@ function mov(){   //------------------------> working
 			var operand2 = signExtend(immediateToBin(args[2]));
 			var I = "1";
 			//-----------------------------
+			currentInstruction = "mov" + " " + args[1] + ", " + "#" + args[2] ;
+			document.getElementById("currentInstr").value = currentInstruction;
 		}
 
 		//------------------------
@@ -256,6 +292,9 @@ function bl(){
 	registers.setItem('lr', pcVal+4);
 	//showRegisters();
 	printf();
+	//currentInstruction = "bl" + " " + "printf" ;
+	//document.getElementById("currentInstr").value = currentInstruction;
+	
 	/*this.excec = function(args){
 	var subCommands = new Hash('printf',new printf);
 	
@@ -401,6 +440,8 @@ function cmp(){	               //----------------> working
 				var operand2 = signExtend(immediateToBin(args[2]));
 				var I = "1";
 				//-----------------------------
+				currentInstruction = "cmp" + " " + args[1] + ", " + args[2] ;
+				document.getElementById("currentInstr").value = currentInstruction;
 				
 			}else{
 				secondOp = registers.getItem(args[2]);
@@ -409,6 +450,8 @@ function cmp(){	               //----------------> working
 				var operand2 = signExtend(convertRegName.getItem(args[2]));
 				var I = "0";
 				//-----------------------------
+				currentInstruction = "cmp" + " " + args[1] + ", " + "#" + args[2] ;
+				document.getElementById("currentInstr").value = currentInstruction;
 			}				
 						
 		if(/^beq$/.test(functionsHash.getItem(lineNum+1))){
@@ -515,6 +558,9 @@ function b(){   //------------------------> working
 			//alert(state);
 		lineByLine();
 		state-=1;  //When control passes back to original lineByLine() call, state is incremented by 1 again. So 1 must be deducted to avoid double increment		
+
+		currentInstruction = "b" + " " + args[1]  ;
+			document.getElementById("currentInstr").value = currentInstruction;
 	}
 
 }
@@ -593,7 +639,13 @@ function putWords(arg,val){
 
 };
 
+//------------------------------------------------------------------------------------------
+//disable execution before .data is reached
 
+function disableExecution() {
+     document.getElementById("StepByStep").disabled = true;
+     alert("Reached End of Execution!");
+};
 
 
 
