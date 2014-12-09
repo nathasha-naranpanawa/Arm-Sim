@@ -19,7 +19,8 @@
 		<td><form action="" id="formsubmit" method = "post">
 				<textarea name = "formContent" id = "formContent" style="display:none;"></textarea>
 				<input type="submit"  name="submit" value="Run" id = "submit" class="btn btn-primary" onClick = "getEditorContent()">
-					<input type="button" onclick="resetEditor()" id="Reset" class="btn btn-primary" name="Reset" value="Reset">	
+					<input type="button" onclick="resetEditor()" id="Reset" class="btn btn-primary" name="Reset" value="Reset"></td>	
+				
 					
 	</tr>
 	<tr>
@@ -35,15 +36,19 @@
 	
 	<tr>
 		
-		<td><input type="file" class="custom-file-input" id="fileToLoad"></td>
-		<td><input type ="button" onclick="loadFileAsText()" class="btn btn-primary" name="Upload File" value="Upload File"></td>
+		<td><input type="file" class="custom-file-input" id="fileToLoad">
+		<td><input type ="button" onclick="loadFileAsText()" class="btn btn-primary" name="Upload File" value="Upload File">
 		<td><input type="button" onclick="lineByLine()" id="StepByStep" class="btn btn-primary" name="StepByStep" value="Step by step"></td>
 		<td><input type="button" onclick="" id="Initialize" class="btn btn-primary" name="Initialize" value="Initialize">
 
-		
-				 	<input type="radio" name="format" value="Hex" id="Hex"  onClick="convert2hex()">Hex
+				<label for="inst">Instruction Count</label>
+				<input type="text" name="inst" id="inst" style="width:20px;height:20px;border-radius:5px">	
+				<input type="radio" name="format" value="Hex" id="Hex"  onClick="convert2hex()">Hex
 				<input type="radio" name="format" value="Decimal"  id="Decimal"  checked onClick="convert2decimal()">Decimal
 				<input type="radio" name="format" value="Binary" id="Binary" onClick="convert2binary()">Binary
+				
+					
+       			 
 		</td>
 	</tr>
 	
@@ -82,6 +87,8 @@
 <script src="functions_1.js"></script>
 <script src="conversions.js"></script>
 <script src="radio.js"></script>
+
+
 
 <script>
     var editor = ace.edit("inputTextToSave");
