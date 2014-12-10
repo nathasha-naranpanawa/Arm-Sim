@@ -16,7 +16,7 @@ var dataLabels = new Hash ();
 var stackPointer;
 var countmem = 0;
 
-var registers=new Hash('r0',0,'r1',0,'r2',0,'r3',0,'r4',0,'r5',0,'r6',0,'r7',0,'r8',0,'r9',0,'r10',0,'r11',0,'r12',0,'sp',8, 'lr',234,'pc',34);
+var registers=new Hash('r0',0,'r1',0,'r2',0,'r3',0,'r4',0,'r5',0,'r6',0,'r7',0,'r8',0,'r9',0,'r10',0,'r11',0,'r12',0,'sp',8, 'lr',234,'pc',0);
 
 var convertRegName=new Hash('r0',"0000",'r1',"0001",'r2',"0010",'r3',"0011",'r4',"0100",'r5',"0101",'r6',"0110",'r7',"0111",'r8',"1000",'r9',"1001",'r10',"1010",'r11',"1011",'r12',"1100",'sp',"1101", 'lr',"1110",'pc',"1111");
 
@@ -30,7 +30,7 @@ var copyReg2 = new Hash();
 var copyStack = newFilledArray();
 
 var functionsHash = new Hash();
-
+var instAddresses = new Hash();
 //var data = new Hash ('=format',"The number is %d and letter is %c");
 
 var labels = new Hash ();
@@ -58,7 +58,7 @@ function sub(){ //------------------------> working
 				registers.setItem(args[1],registers.getItem(args[2])-parseInt(args[3]));
 				
 				//-----------------------------
-				var operand2 = signExtend(immediateToBin(args[3]));
+				var operand2 = signExtend(immediateToBin(args[3]),12);
 				var I = "1";
 				//-----------------------------
 
@@ -69,7 +69,7 @@ function sub(){ //------------------------> working
 				registers.setItem(args[1],registers.getItem(args[2])-registers.getItem(args[3]));
 				
 				//-----------------------------
-				var operand2 = signExtend(convertRegName.getItem(args[3]));
+				var operand2 = signExtend(convertRegName.getItem(args[3]),12);
 				var I = "0";
 				//-----------------------------
 
@@ -83,7 +83,8 @@ function sub(){ //------------------------> working
 					
 			//instruction = instruction+args[2]+args[1]+args[3]
 			instruction = dataProcess(I, Rn, Rd, operand2, "0010");
-			instrMem[instCount] = instruction;
+			instrMem[pcVal] = instruction;
+			updatePC(4);
 			//-----------------------------
 		}		
 	}
@@ -100,7 +101,7 @@ function add(){	//------------------------> working
 				registers.setItem(args[1],registers.getItem(args[2])+parseInt(args[3]));
 				
 				//-----------------------------------------
-				var operand2 = signExtend(immediateToBin(args[3]));
+				var operand2 = signExtend(immediateToBin(args[3]),12);
 				var I = "1";
 				//-----------------------------------------
 				currentInstruction = "add" + " " + args[1] + ", " + args[2] + ", " + "#" + args[3] ;
@@ -110,7 +111,7 @@ function add(){	//------------------------> working
 				registers.setItem(args[1],registers.getItem(args[2])+registers.getItem(args[3]));
 				
 				//-----------------------------------------
-				var operand2 = signExtend(convertRegName.getItem(args[3]));
+				var operand2 = signExtend(convertRegName.getItem(args[3]), 12);
 				var I = "0";
 				//-----------------------------------------
 				currentInstruction = "add" + " " + args[1] + ", " + args[2] + ", " + args[3] ;
@@ -123,7 +124,8 @@ function add(){	//------------------------> working
 					
 				//instruction = instruction+args[2]+args[1]+args[3]
 				instruction = dataProcess(I, Rn, Rd, operand2, "0100");
-				instrMem[instCount] = instruction;
+				instrMem[pcVal] = instruction;
+				updatePC(4);
 				//-----------------------------------------
 		}		
 	}
@@ -162,10 +164,11 @@ function str(){
 		//-----------------------------------------
 		var Rn = convertRegName.getItem(args[1]);
 		var Rd = convertRegName.getItem(args[2]);
-		var operand2 = signExtend(immediateToBin(args[3]));
+		var operand2 = signExtend(immediateToBin(args[3]),12);
 				
 		instruction = dataTrans(Rn, Rd, operand2, "011001");
-		instrMem[instCount] = instruction;
+		instrMem[pcVal] = instruction;
+		updatePC(4);
 		//-----------------------------------------
 		
 		
@@ -206,10 +209,9 @@ function ldr(){
 				//-----------------------------------------
 				var Rn = convertRegName.getItem(args[2]);
 				var Rd = convertRegName.getItem(args[1]);
-				var operand2 = signExtend(immediateToBin(args[3]));
+				var operand2 = signExtend(immediateToBin(args[3]),12);
 				
-				instruction = dataTrans(Rn, Rd, operand2, "011000");
-				instrMem[instCount] = instruction;
+				
 				//-----------------------------------------
 			}
 
@@ -229,13 +231,33 @@ function ldr(){
 				//addr.setItem('0x000024',index2);
 				//memory[2]=str2hex(data.getItem(index2));
 				//alert(data.getItem(index2));
+				
+				/*For load of a label, we consider it realtive to pc*/
+				//ldr r2, [PC, #offset]
+				//Calculating offset
+				var ldrAddr = pcVal;
+				var temp = (args[2].split("=").filter(Boolean));
+				var regex = new RegExp(temp[0]);
+				alert(regex);
+				var destLine = findNextCommand(checkForLabel(regex));
+				var destAddr = instAddresses.getItem(codeLines[destLine]);
+				var offset =(destAddr-ldrAddr-8)/4;
+				var operand2 = signExtend(dec2bin(offset).toString(), 12);
+				
+				var Rn = convertRegName.getItem('pc');
+				var Rd = convertRegName.getItem(args[1]);
 
 				//increment data memory hash for the next label
 				countmem +=1;
 				currentInstruction = "ldr" + " " + args[1] + ", " + args[2] ;
 				document.getElementById("currentInstr").value = currentInstruction;
 				
-			}			
+			}	
+			
+				instruction = dataTrans(Rn, Rd, operand2, "011000");
+				instrMem[pcVal] = instruction;
+			
+				updatePC(4);
 	}
 }
 //-----------------------------------------------------------------------------------------------------
@@ -251,7 +273,7 @@ function mov(){   //------------------------> working
 			//alert(registers.getItem(args[1]));
 			
 			//-----------------------------
-			var operand2 = signExtend(convertRegName.getItem(args[2]));
+			var operand2 = signExtend(convertRegName.getItem(args[2]),12);
 			var I = "0";
 
 			currentInstruction = "mov" + " " + args[1] + ", " + args[2] ;
@@ -268,7 +290,7 @@ function mov(){   //------------------------> working
 			registers.setItem(args[1],parseInt(args[2]));
 			
 			//-----------------------------
-			var operand2 = signExtend(immediateToBin(args[2]));
+			var operand2 = signExtend(immediateToBin(args[2]),12);
 			var I = "1";
 			//-----------------------------
 			currentInstruction = "mov" + " " + args[1] + ", " + "#" + args[2] ;
@@ -279,8 +301,10 @@ function mov(){   //------------------------> working
 		var Rd = convertRegName.getItem(args[1]);
 		var Rn = "0000";
 		instruction = dataProcess(I, Rn, Rd, operand2, "1101")
-		instrMem[instCount] = instruction;
-
+		instrMem[pcVal] = instruction;
+		if((!/pc/.test(args[1]))&&(!/lr/.test(args[2]))){ //Finally, value of lr is moved to pc
+			updatePC(4);
+		}
 		//------------------------
 	}
 
@@ -437,7 +461,7 @@ function cmp(){	               //----------------> working
 				secondOp = parseInt(args[2]);
 				
 				//-----------------------------
-				var operand2 = signExtend(immediateToBin(args[2]));
+				var operand2 = signExtend(immediateToBin(args[2]),12);
 				var I = "1";
 				//-----------------------------
 				currentInstruction = "cmp" + " " + args[1] + ", " + args[2] ;
@@ -447,7 +471,7 @@ function cmp(){	               //----------------> working
 				secondOp = registers.getItem(args[2]);
 				
 				//-----------------------------
-				var operand2 = signExtend(convertRegName.getItem(args[2]));
+				var operand2 = signExtend(convertRegName.getItem(args[2]),12);
 				var I = "0";
 				//-----------------------------
 				currentInstruction = "cmp" + " " + args[1] + ", " + "#" + args[2] ;
@@ -514,7 +538,8 @@ function cmp(){	               //----------------> working
 		var Rn = convertRegName.getItem(args[1]);
 		var Rd = "0000";				
 		instruction = dataProcess(I, Rn, Rd, operand2, "1010");
-		instrMem[instCount] = instruction;	
+		instrMem[pcVal] = instruction;	
+		updatePC(4);
 		//-----------------------------
 		}		
 	}
@@ -528,18 +553,56 @@ function branch(){   //------------------------> working
 	
 		var nextLine;
 		var regex = new RegExp(args[1]);
+		var cond;
+		
+		if(/^beq$/.test(functionsHash.getItem(lineNum))){
+			cond = "0000";
+		}else if(/^bne$/.test(functionsHash.getItem(lineNum))){
+			cond = "0001";
+		}else if(/^bgt$/.test(functionsHash.getItem(lineNum))){
+			cond = "1100";
+		}else if(/^blt$/.test(functionsHash.getItem(lineNum))){
+			cond = "1011";
+		}else if(/^bge$/.test(functionsHash.getItem(lineNum))){
+			cond = "1010";
+		}else if(/^ble$/.test(functionsHash.getItem(lineNum))){
+			cond = "1101";
+		}
+		
+		alert(args[0]);
+		var instruction = branchFormat(cond, "0", "1", args[1]);
+		instrMem[pcVal] = instruction;
+			
+		
 		//alert("okay");
 		if(cmpResult == 1){
 			nextLine = checkForLabel(regex)+1;
 			state = nextLine-startLine;
-			//alert(state);
+		
+			var destLine = findNextCommand(checkForLabel(regex));
+			var destAddr = instAddresses.getItem(codeLines[destLine]);
+
+			updatePC(destAddr-pcVal); //New destination is not the immediate next instruction.
+		
 			lineByLine();
 			state-=1;  //When control passes back to original lineByLine() call, state is incremented by 1 again. So 1 must be deducted to avoid double increment
+			instCount-=1;
+			instIncrement-=4;
+					
 		}else{ 
+		
 			state+=1;
+			updatePC(4);
 			lineByLine();
 			state-=1;
+			//pcVal-=4;
+			instCount-=1;
+			instIncrement-=4;
+			//updatePC(4);
 		}
+		
+		
+		//updatePC(4);
 		
 	}
 }
@@ -556,11 +619,29 @@ function b(){   //------------------------> working
 		nextLine = checkForLabel(regex)+1;
 		state = nextLine-startLine;
 			//alert(state);
+		//state+=1;
+		//lineByLine();
+		//state-=1;  //When control passes back to original lineByLine() call, state is incremented by 1 again. So 1 must be deducted to avoid double increment		
+		//pcVal-=4;
+		//instCount-=1;
+		//instIncrement-=4;
+		
+		currentInstruction = "b" + " " + args[1]  ;
+		document.getElementById("currentInstr").value = currentInstruction;
+		
+		var instruction = branchFormat("1110", "0", "1", args[1]);
+		instrMem[pcVal] = instruction;
+		
+		var destLine = findNextCommand(checkForLabel(regex));
+		var destAddr = instAddresses.getItem(codeLines[destLine]);
+		//alert(destAddr);
+		updatePC(destAddr-pcVal);
+		
 		lineByLine();
 		state-=1;  //When control passes back to original lineByLine() call, state is incremented by 1 again. So 1 must be deducted to avoid double increment		
-
-		currentInstruction = "b" + " " + args[1]  ;
-			document.getElementById("currentInstr").value = currentInstruction;
+		//pcVal-=4;
+		instCount-=1;
+		instIncrement-=4;		
 	}
 
 }
@@ -596,6 +677,46 @@ function dataTrans(Rn, Rd, operand2, opCode){  //------------------------> worki
 	return format;
 };
 
+//-----------------------------------------------------------------------
+//Instruction format for branch instructions
+/*
+Format: cond:4bits
+		Offset:24 bits
+		opCode+L bit:4 bits  (L=0 for b and L=1 for bl and opCode = 101)
+offset = (Destination addr - branch addr - 8)/4
+8 is subtracted to allow for pipelining. Divided by 4 to get the word address.
+*/
+
+function branchFormat(cond, L, Btaken, label){
+
+	var branchAddr = pcVal;
+	var destAddr;
+	var destLine;
+	var nextLine;
+	
+	
+	
+	var regex = new RegExp(label);
+	if(Btaken == 1){
+		//destLine = checkForLabel(regex)+1;
+		//functionsHash.getItem(lineNum+1)
+		destLine = findNextCommand(checkForLabel(regex));
+		//alert(destLine);
+		
+		destAddr = instAddresses.getItem(codeLines[destLine]);
+		//alert(destAddr);
+	}else{
+		destAddr = pcVal+4;
+	}
+	
+	var offset =(destAddr-branchAddr-8)/4;
+	var binOffset = signExtend(dec2bin(offset).toString(), 24);
+	
+	var format = cond + "101" + L + binOffset;
+	
+	return format; 
+};
+
 //------------------------------------------------------------------------
 //To convert an immediate decimal value to a binary number
 function immediateToBin(num){   //------------------------> working
@@ -608,11 +729,11 @@ function immediateToBin(num){   //------------------------> working
 }
 //----------------------------------------------------------------------------
 //Function to convert length of operand2 to 12 bits
-function signExtend(str){    //------------------------> working
+function signExtend(str, bits){    //------------------------> working
 
-	var lacking = 12 - str.length;
+	var lacking = bits - str.length;
 	
-	if(lacking<12){	
+	if(lacking<bits){	
 		for(var i=0; i<lacking; i++){
 			str = "0"+str;
 		}	

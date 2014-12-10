@@ -8,9 +8,10 @@ var lineNum; //Stores the current line number
 var codeLines;  //Stores all the commands as an array
 var state = 0;  //Stores state regarding the current line to be executed
 var startLine; //Place where main: starts
-var pcVal = 34;
+var pcVal = 0;
 var instCount = 0; //Keeps track of the number of instructions executed
 var currentInstruction="";
+var instIncrement = 0;
 
 function lineByLine()
 {
@@ -26,13 +27,14 @@ function lineByLine()
 	
 	getLabels(codeLines); 
 	getOperations();
+	getinstAddresses();
 	//putLabels();
 	
 	startLine = checkForLabel(/main:/) + 1;  //Execution should be started from the line following main
 	var i = startLine+state;
 	
 	//------------------
-	updatePC();
+	//updatePC(4);
 	//------------------
 	
 		var commentTest = (/@/.test(codeLines[i].charAt(0))); //Checking for comments
@@ -88,7 +90,7 @@ function lineByLine()
 		//alert(instCount);
 		document.getElementById("inst").value =  instCount;
 		state+=1;
-		
+		instIncrement+=4;
 }
 
 
@@ -207,7 +209,7 @@ function showRegisters(){     //-------------> working
 
 		//num = dec2hex(j);
 		string5=string5+l+" : " + instrMem[l] + "\n";
-		l +=1;
+		l +=4;
 		
 	}
 		document.getElementById("Instr").innerHTML =string5;
@@ -318,7 +320,7 @@ function initialize(){   //-------------> working
 	registers.setItem('r12',num);
 	registers.setItem('sp',8);
 	registers.setItem('lr',234);
-	registers.setItem('pc',34);
+	registers.setItem('pc',0);
 
 	for(i=0;i<memory.length;i++){
 		memory[i]=0;
@@ -334,8 +336,8 @@ function initialize(){   //-------------> working
 
 	state = 0;
 	cmpResult = 0;
-	pcVal = 34;
-	
+	pcVal = 0;
+	var instIncrement = 0;
 	showRegisters();
 
 	
@@ -351,6 +353,7 @@ function initialize(){   //-------------> working
 }
 
 //----------------------------------------------------------------------------------------------------------
+
 
 //Puts operations in each command in a hashmap along with their line numbers
 function getOperations(){    //-------------> working
@@ -368,7 +371,7 @@ for(var i=0; i<count; i++){
 		if(!(commentTest||textTest||globalTest||mainTest||!codeLines[i]||labelTest)){ //(!codeLines[i]) check if the line is blank
 
 			var splitLine = codeLines[i].split(/[ ,\t]+/).filter(Boolean); //-----> working. filter(Boolean) removes null values
-			
+			//var splitLine = codeLines[i];
 			functionsHash.setItem(i, splitLine[0]); //Store function names with their line numbers
 			
 		}
@@ -510,14 +513,57 @@ function fromRadio(){
 };
 
 //----------------------------------------------------------------------------------
-function updatePC(){
+function updatePC(a){
 
-	pcVal+=4;
+	pcVal+=a;
 	registers.setItem('pc',pcVal);
 	
 };
 //----------------------------------------------------------------------------------
 
+//Puts command lines as key and their addresses as values into a hash map. Used in branch instructions.
+function getinstAddresses(){    //-------------> working
 
+var count = codeLines.length;
+var index = 0;
 
+for(var i=0; i<count; i++){  
+		
+		var commentTest = (/@/.test(codeLines[i].charAt(0))); //Checking for comments
+		var textTest = (/.text/.test( codeLines[i]));  //checking for .text keyword 
+		var globalTest = /.global/.test( codeLines[i]); //checking for .global keyword
+		var mainTest = /main:/.test( codeLines[i]); //checking for main: label -------> Just for now!! should change later!!!!
+		var labelTest = labels.hasItem(codeLines[i]); 
+	
+		if(!(commentTest||textTest||globalTest||mainTest||!codeLines[i]||labelTest)){ //(!codeLines[i]) check if the line is blank
 
+			var opLine = codeLines[i]; //-----> working. filter(Boolean) removes null values
+			
+			instAddresses.setItem(opLine, index); //Store function names with their line numbers
+			index+=4;
+			
+		}
+	}	
+}
+
+//Function to get the next command to be executed from the current position
+function findNextCommand(position){      //-------------> working
+
+	for(var i=position; i<codeLines.length; i++){
+
+		var commentTest = (/@/.test(codeLines[i].charAt(0))); //Checking for comments
+		//var textTest = (/.text/.test( codeLines[i]));  //checking for .text keyword 
+		//var globalTest = /.global/.test( codeLines[i]); //checking for .global keyword
+		var mainTest = /main:/.test( codeLines[i]); //checking for main: label -------> Just for now!! should change later!!!!
+		var labelTest = labels.hasItem(codeLines[i]); 
+	
+		if(!(commentTest||mainTest||!codeLines[i]||labelTest)){ //(!codeLines[i]) check if the line is blank
+			return i;
+			//return codeLines[i];
+			
+		}
+	
+	
+	}
+
+}
