@@ -34,7 +34,7 @@ function lineByLine()
 	var i = startLine+state;
 	
 	//------------------
-	//updatePC(4);
+	//updatePC();
 	//------------------
 	
 		var commentTest = (/@/.test(codeLines[i].charAt(0))); //Checking for comments
@@ -91,6 +91,7 @@ function lineByLine()
 		document.getElementById("inst").value =  instCount;
 		state+=1;
 		instIncrement+=4;
+		
 }
 
 
@@ -299,6 +300,8 @@ function initialize(){   //-------------> working
 	instCount =0;
 	document.getElementById("inst").value =  instCount;
 	document.getElementById("currentInstr").value =  "";
+	document.getElementById("outputText").value = "";
+		document.getElementById("inputs").value = "";
 	//document.getElementById("Hex").reset();
 	//document.getElementById("Decimal").reset();
 	//document.getElementById("Binary").reset();
@@ -354,7 +357,6 @@ function initialize(){   //-------------> working
 
 //----------------------------------------------------------------------------------------------------------
 
-
 //Puts operations in each command in a hashmap along with their line numbers
 function getOperations(){    //-------------> working
 
@@ -371,7 +373,7 @@ for(var i=0; i<count; i++){
 		if(!(commentTest||textTest||globalTest||mainTest||!codeLines[i]||labelTest)){ //(!codeLines[i]) check if the line is blank
 
 			var splitLine = codeLines[i].split(/[ ,\t]+/).filter(Boolean); //-----> working. filter(Boolean) removes null values
-			//var splitLine = codeLines[i];
+			
 			functionsHash.setItem(i, splitLine[0]); //Store function names with their line numbers
 			
 		}
@@ -567,3 +569,5 @@ function findNextCommand(position){      //-------------> working
 	}
 
 }
+
+
