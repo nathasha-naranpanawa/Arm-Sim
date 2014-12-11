@@ -15,6 +15,8 @@ var dataLabels = new Hash ();
 
 var stackPointer;
 var countmem = 0;
+var stackallocation;
+var brancharg;
 
 var registers=new Hash('r0',0,'r1',0,'r2',0,'r3',0,'r4',0,'r5',0,'r6',0,'r7',0,'r8',0,'r9',0,'r10',0,'r11',0,'r12',0,'sp',8, 'lr',234,'pc',0);
 
@@ -31,6 +33,7 @@ var copyStack = newFilledArray();
 
 var functionsHash = new Hash();
 var instAddresses = new Hash();
+
 //var data = new Hash ('=format',"The number is %d and letter is %c");
 
 var labels = new Hash ();
@@ -62,8 +65,14 @@ function sub(){ //------------------------> working
 				var I = "1";
 				//-----------------------------
 
-				currentInstruction = "sub" + " " + args[1] + ", " + args[2] + ", " + "#" + args[3] ;
+				currentInstruction = args[0] + " " + args[1] + ", " + args[2] + ", " + "#" + args[3] ;
 				document.getElementById("currentInstr").value = currentInstruction;
+
+				//------------------------------
+
+				if (args[1]=="sp"){
+					stackallocation = Math.pow(2, (args[3]*4)) - 1;
+				}
 			}
 			else{
 				registers.setItem(args[1],registers.getItem(args[2])-registers.getItem(args[3]));
@@ -73,7 +82,7 @@ function sub(){ //------------------------> working
 				var I = "0";
 				//-----------------------------
 
-				currentInstruction = "sub" + " " + args[1] + ", " + args[2] + ", "  + args[3] ;
+				currentInstruction = args[0] + " " + args[1] + ", " + args[2] + ", "  + args[3] ;
 				document.getElementById("currentInstr").value = currentInstruction;
 			}
 			
@@ -83,7 +92,7 @@ function sub(){ //------------------------> working
 					
 			//instruction = instruction+args[2]+args[1]+args[3]
 			instruction = dataProcess(I, Rn, Rd, operand2, "0010");
-			instrMem[pcVal] = instruction;
+			instrMem[instCount] = instruction;
 			updatePC(4);
 			//-----------------------------
 		}		
@@ -104,17 +113,17 @@ function add(){	//------------------------> working
 				var operand2 = signExtend(immediateToBin(args[3]),12);
 				var I = "1";
 				//-----------------------------------------
-				currentInstruction = "add" + " " + args[1] + ", " + args[2] + ", " + "#" + args[3] ;
+				currentInstruction = args[0] + " " + args[1] + ", " + args[2] + ", " + "#" + args[3] ;
 				document.getElementById("currentInstr").value = currentInstruction;
 			}
 			else{
 				registers.setItem(args[1],registers.getItem(args[2])+registers.getItem(args[3]));
 				
 				//-----------------------------------------
-				var operand2 = signExtend(convertRegName.getItem(args[3]), 12);
+				var operand2 = signExtend(convertRegName.getItem(args[3]),12);
 				var I = "0";
 				//-----------------------------------------
-				currentInstruction = "add" + " " + args[1] + ", " + args[2] + ", " + args[3] ;
+				currentInstruction = args[0] + " " + args[1] + ", " + args[2] + ", " + args[3] ;
 				document.getElementById("currentInstr").value = currentInstruction;
 			}
 			
@@ -124,7 +133,7 @@ function add(){	//------------------------> working
 					
 				//instruction = instruction+args[2]+args[1]+args[3]
 				instruction = dataProcess(I, Rn, Rd, operand2, "0100");
-				instrMem[pcVal] = instruction;
+				instrMem[instCount] = instruction;
 				updatePC(4);
 				//-----------------------------------------
 		}		
@@ -148,15 +157,20 @@ function str(){
 			//stack[index3]= wrd;
 			stack[index3]=registers.getItem(args[1]);
 			//alert(stack[index3]);
-			currentInstruction = "str" + " " + args[1] + ", " + "[" + args[2] + ", " + "#" + args[3] + "]" ;
+			currentInstruction = args[0] + " " + args[1] + ", " + "[" + args[2] + ", " + "#" + args[3] + "]" ;
 			document.getElementById("currentInstr").value = currentInstruction;
 
+			//--------------------------------------
+
+					if (index3>stackallocation){
+						alert("Stack overflow!!!");
+					}
 
 		}else{
 			var index=parseInt(registers.getItem(args[2]))+parseInt(args[3]);
 			memory[index]=registers.getItem(args[1]);
 
-			currentInstruction = "str" + " " + args[1] + ", " + args[2] + ", "  + args[3] ;
+			currentInstruction = args[0] + " " + args[1] + ", " + args[2] + ", "  + args[3] ;
 			document.getElementById("currentInstr").value = currentInstruction;
 		}
 		//memory[index]=registers.getItem(args[1]);
@@ -167,7 +181,7 @@ function str(){
 		var operand2 = signExtend(immediateToBin(args[3]),12);
 				
 		instruction = dataTrans(Rn, Rd, operand2, "011001");
-		instrMem[pcVal] = instruction;
+		instrMem[instCount] = instruction;
 		updatePC(4);
 		//-----------------------------------------
 		
@@ -194,15 +208,20 @@ function ldr(){
 					//var index4=parseInt(args[3]);	
 					//alert(index4);
 					registers.setItem(args[1],stack[stackPointer]);
-					currentInstruction = "ldr" + " " + args[1] + ", " + "[" + args[2] + ", " + "#" + args[3] +"]";
+
+					currentInstruction = args[0] + " " + args[1] + ", " + "[" + args[2] + ", " + "#" + args[3] +"]";
 					document.getElementById("currentInstr").value = currentInstruction;
+
+					//-----------------------------------------------------
+
+
 				}else{
 					var index1=parseInt(registers.getItem(args[2]))+parseInt(args[3]);
 					registers.setItem(args[1],memory[index1]);
 					//alert(registers.getItem(args[1]));
 					//alert(index1);
 					//addr.setItem('0x000018',index1);
-					currentInstruction = "ldr" + " " + args[1] + ", " + args[2] + ", "  + args[3] ;
+					currentInstruction = args[0] + " " + args[1] + ", " + args[2] + ", "  + args[3] ;
 					document.getElementById("currentInstr").value = currentInstruction;
 				}
 				
@@ -211,7 +230,8 @@ function ldr(){
 				var Rd = convertRegName.getItem(args[1]);
 				var operand2 = signExtend(immediateToBin(args[3]),12);
 				
-				
+				//instruction = dataTrans(Rn, Rd, operand2, "011000");
+				//instrMem[instCount] = instruction;
 				//-----------------------------------------
 			}
 
@@ -231,7 +251,7 @@ function ldr(){
 				//addr.setItem('0x000024',index2);
 				//memory[2]=str2hex(data.getItem(index2));
 				//alert(data.getItem(index2));
-				
+
 				/*For load of a label, we consider it realtive to pc*/
 				//ldr r2, [PC, #offset]
 				//Calculating offset
@@ -249,11 +269,11 @@ function ldr(){
 
 				//increment data memory hash for the next label
 				countmem +=1;
-				currentInstruction = "ldr" + " " + args[1] + ", " + args[2] ;
+				currentInstruction = args[0] + " " + args[1] + ", " + args[2] ;
 				document.getElementById("currentInstr").value = currentInstruction;
 				
-			}	
-			
+			}			
+
 				instruction = dataTrans(Rn, Rd, operand2, "011000");
 				instrMem[pcVal] = instruction;
 			
@@ -276,7 +296,7 @@ function mov(){   //------------------------> working
 			var operand2 = signExtend(convertRegName.getItem(args[2]),12);
 			var I = "0";
 
-			currentInstruction = "mov" + " " + args[1] + ", " + args[2] ;
+			currentInstruction = args[0] + " " + args[1] + ", " + args[2] ;
 			document.getElementById("currentInstr").value = currentInstruction;
 
 			if(((args[1])== "pc")&&((args[2])=="lr")){
@@ -293,7 +313,7 @@ function mov(){   //------------------------> working
 			var operand2 = signExtend(immediateToBin(args[2]),12);
 			var I = "1";
 			//-----------------------------
-			currentInstruction = "mov" + " " + args[1] + ", " + "#" + args[2] ;
+			currentInstruction = args[0] + " " + args[1] + ", " + "#" + args[2] ;
 			document.getElementById("currentInstr").value = currentInstruction;
 		}
 
@@ -301,7 +321,7 @@ function mov(){   //------------------------> working
 		var Rd = convertRegName.getItem(args[1]);
 		var Rn = "0000";
 		instruction = dataProcess(I, Rn, Rd, operand2, "1101")
-		instrMem[pcVal] = instruction;
+		instrMem[instCount] = instruction;
 		if((!/pc/.test(args[1]))&&(!/lr/.test(args[2]))){ //Finally, value of lr is moved to pc
 			updatePC(4);
 		}
@@ -315,9 +335,10 @@ function bl(){
 	this.excec = function(args){
 	registers.setItem('lr', pcVal+4);
 	//showRegisters();
+	currentInstruction = args[0] + " " + "printf" ;
+	document.getElementById("currentInstr").value = currentInstruction;
 	printf();
-	//currentInstruction = "bl" + " " + "printf" ;
-	//document.getElementById("currentInstr").value = currentInstruction;
+	
 	
 	/*this.excec = function(args){
 	var subCommands = new Hash('printf',new printf);
@@ -330,23 +351,34 @@ function bl(){
 
 //--------------------------------------------------------------------------------------------------------------------------------
 function printf(){
+
 	var regs=['r1','r2','r3','r4','r5'];
+
 	//this.excec = function(){
-		var toPrint=registers.getItem('r0');
+		var indextoPrint=registers.getItem('r0');
+		var toPrint = memory[indextoPrint];
+
+		//var toPrint=registers.getItem('r0');
+
 		//document.getElementById("outputText").innerHTML =toPrint;
 		//calculate num of elements have to substitute
 		var num = numOfFormats(toPrint);
+		alert(num);
+
 		if(haveFormats(toPrint)){				//if have to substitute
 			var args = toPrint.split(/%[a-z]/);
 			var string="";
 			for(i=0;i<num;i++){
+				alert(string);
 				string=string+args[i]+" "+registers.getItem(regs[i+1])+" ";
 				
 			}
 			//string = string+args[i];
-			var obj=document.getElementById("outputText");
-				var txt=document.createTextNode(string);
-				obj.appendChild(txt);
+			//var obj=document.getElementById("outputText");
+			//	var txt=document.createTextNode(string);
+			//	obj.appendChild(txt);
+			document.getElementById("outputText").value = string;
+
 			//var obj=document.getElementById("outputText");
 			//var txt=document.createTextNode(string);
 			//obj.appendChild(txt);
@@ -456,6 +488,7 @@ function cmp(){	               //----------------> working
 		var instruction;
 		var secondOp;
 		
+		
 		if(args.length<4){		
 			if(isInt(args[2])){	
 				secondOp = parseInt(args[2]);
@@ -464,7 +497,7 @@ function cmp(){	               //----------------> working
 				var operand2 = signExtend(immediateToBin(args[2]),12);
 				var I = "1";
 				//-----------------------------
-				currentInstruction = "cmp" + " " + args[1] + ", " + args[2] ;
+				currentInstruction = args[0] + " " + args[1] + ", " + "#" + args[2] ;
 				document.getElementById("currentInstr").value = currentInstruction;
 				
 			}else{
@@ -474,7 +507,7 @@ function cmp(){	               //----------------> working
 				var operand2 = signExtend(convertRegName.getItem(args[2]),12);
 				var I = "0";
 				//-----------------------------
-				currentInstruction = "cmp" + " " + args[1] + ", " + "#" + args[2] ;
+				currentInstruction = args[0] + " " + args[1] + ", "  + args[2] ;
 				document.getElementById("currentInstr").value = currentInstruction;
 			}				
 						
@@ -482,6 +515,7 @@ function cmp(){	               //----------------> working
 			if(registers.getItem(args[1])==secondOp){
 				alert(functionsHash.getItem(lineNum+1));
 				cmpResult = 1;
+				//brancharg = "beq";
 				//return true;
 			}else{
 				alert("branch not taken");
@@ -491,6 +525,7 @@ function cmp(){	               //----------------> working
 			if(registers.getItem(args[1])>=secondOp){
 				alert(functionsHash.getItem(lineNum+1));
 				cmpResult = 1;
+				//brancharg ="bge";
 				//return true;
 		}else{
 				alert("branch not taken");
@@ -500,6 +535,7 @@ function cmp(){	               //----------------> working
 			if(registers.getItem(args[1])<=secondOp){
 				alert(functionsHash.getItem(lineNum+1));
 				cmpResult = 1;
+				//brancharg ="ble";
 				//return true;
 			}else{
 				alert("branch not taken");
@@ -509,6 +545,7 @@ function cmp(){	               //----------------> working
 			if(registers.getItem(args[1])!=secondOp){
 				alert(functionsHash.getItem(lineNum+1));
 				cmpResult = 1;
+				//brancharg = "bne";
 				//return true;
 			}else{
 				alert("branch not taken");
@@ -518,6 +555,7 @@ function cmp(){	               //----------------> working
 			if(registers.getItem(args[1])>secondOp){
 				alert(functionsHash.getItem(lineNum+1));
 				cmpResult = 1;
+				//brancharg ="bgt";
 				//return true;
 			}else{
 				alert("branch not taken");
@@ -527,6 +565,7 @@ function cmp(){	               //----------------> working
 			if(registers.getItem(args[1])<secondOp){
 				alert(functionsHash.getItem(lineNum+1));
 				cmpResult = 1;
+				//brancharg = "blt" ;
 				//return true;
 			}else{
 				alert("branch not taken");
@@ -534,12 +573,14 @@ function cmp(){	               //----------------> working
 			}	
 		}
 		
+			
+		
 		//-----------------------------
 		var Rn = convertRegName.getItem(args[1]);
 		var Rd = "0000";				
 		instruction = dataProcess(I, Rn, Rd, operand2, "1010");
-		instrMem[pcVal] = instruction;	
-		updatePC(4);
+		instrMem[instCount] = instruction;
+		updatePC(4);	
 		//-----------------------------
 		}		
 	}
@@ -553,44 +594,52 @@ function branch(){   //------------------------> working
 	
 		var nextLine;
 		var regex = new RegExp(args[1]);
+
 		var cond;
 		
 		if(/^beq$/.test(functionsHash.getItem(lineNum))){
 			cond = "0000";
+			brancharg = "beq";
 		}else if(/^bne$/.test(functionsHash.getItem(lineNum))){
 			cond = "0001";
+			brancharg = "bne";
 		}else if(/^bgt$/.test(functionsHash.getItem(lineNum))){
 			cond = "1100";
+			brancharg = "bgt";
 		}else if(/^blt$/.test(functionsHash.getItem(lineNum))){
 			cond = "1011";
+			brancharg = "blt";
 		}else if(/^bge$/.test(functionsHash.getItem(lineNum))){
 			cond = "1010";
+			brancharg = "bge";
 		}else if(/^ble$/.test(functionsHash.getItem(lineNum))){
 			cond = "1101";
+			brancharg = "ble";
 		}
 		
 		alert(args[0]);
 		var instruction = branchFormat(cond, "0", "1", args[1]);
 		instrMem[pcVal] = instruction;
-			
-		
+
 		//alert("okay");
 		if(cmpResult == 1){
 			nextLine = checkForLabel(regex)+1;
 			state = nextLine-startLine;
-		
 			var destLine = findNextCommand(checkForLabel(regex));
 			var destAddr = instAddresses.getItem(codeLines[destLine]);
 
 			updatePC(destAddr-pcVal); //New destination is not the immediate next instruction.
 		
+			//alert(state);
 			lineByLine();
 			state-=1;  //When control passes back to original lineByLine() call, state is incremented by 1 again. So 1 must be deducted to avoid double increment
+			//alert(args[0]);
 			instCount-=1;
 			instIncrement-=4;
-					
+			currentInstruction = brancharg + " " + args[1] ;
+			document.getElementById("currentInstr").value = currentInstruction;
+			
 		}else{ 
-		
 			state+=1;
 			updatePC(4);
 			lineByLine();
@@ -599,10 +648,9 @@ function branch(){   //------------------------> working
 			instCount-=1;
 			instIncrement-=4;
 			//updatePC(4);
+			//currentInstruction = args[0] + " " + args[1] ;
+			//document.getElementById("currentInstr").value = currentInstruction;
 		}
-		
-		
-		//updatePC(4);
 		
 	}
 }
@@ -619,14 +667,10 @@ function b(){   //------------------------> working
 		nextLine = checkForLabel(regex)+1;
 		state = nextLine-startLine;
 			//alert(state);
-		//state+=1;
 		//lineByLine();
 		//state-=1;  //When control passes back to original lineByLine() call, state is incremented by 1 again. So 1 must be deducted to avoid double increment		
-		//pcVal-=4;
-		//instCount-=1;
-		//instIncrement-=4;
-		
-		currentInstruction = "b" + " " + args[1]  ;
+
+		currentInstruction = args[0] + " " + args[1]  ;
 		document.getElementById("currentInstr").value = currentInstruction;
 		
 		var instruction = branchFormat("1110", "0", "1", args[1]);
@@ -641,7 +685,8 @@ function b(){   //------------------------> working
 		state-=1;  //When control passes back to original lineByLine() call, state is incremented by 1 again. So 1 must be deducted to avoid double increment		
 		//pcVal-=4;
 		instCount-=1;
-		instIncrement-=4;		
+		instIncrement-=4;
+
 	}
 
 }
@@ -677,7 +722,7 @@ function dataTrans(Rn, Rd, operand2, opCode){  //------------------------> worki
 	return format;
 };
 
-//-----------------------------------------------------------------------
+//------------------------------------------------------------------------
 //Instruction format for branch instructions
 /*
 Format: cond:4bits
@@ -729,7 +774,7 @@ function immediateToBin(num){   //------------------------> working
 }
 //----------------------------------------------------------------------------
 //Function to convert length of operand2 to 12 bits
-function signExtend(str, bits){    //------------------------> working
+function signExtend(str,bits){    //------------------------> working
 
 	var lacking = bits - str.length;
 	
