@@ -92,7 +92,7 @@ function sub(){ //------------------------> working
 					
 			//instruction = instruction+args[2]+args[1]+args[3]
 			instruction = dataProcess(I, Rn, Rd, operand2, "0010");
-			instrMem[instCount] = instruction;
+			instrMem[pcVal] = instruction;
 			updatePC(4);
 			//-----------------------------
 		}		
@@ -133,7 +133,7 @@ function add(){	//------------------------> working
 					
 				//instruction = instruction+args[2]+args[1]+args[3]
 				instruction = dataProcess(I, Rn, Rd, operand2, "0100");
-				instrMem[instCount] = instruction;
+				instrMem[pcVal] = instruction;
 				updatePC(4);
 				//-----------------------------------------
 		}		
@@ -181,7 +181,7 @@ function str(){
 		var operand2 = signExtend(immediateToBin(args[3]),12);
 				
 		instruction = dataTrans(Rn, Rd, operand2, "011001");
-		instrMem[instCount] = instruction;
+		instrMem[pcVal] = instruction;
 		updatePC(4);
 		//-----------------------------------------
 		
@@ -321,7 +321,7 @@ function mov(){   //------------------------> working
 		var Rd = convertRegName.getItem(args[1]);
 		var Rn = "0000";
 		instruction = dataProcess(I, Rn, Rd, operand2, "1101")
-		instrMem[instCount] = instruction;
+		instrMem[pcVal] = instruction;
 		if((!/pc/.test(args[1]))&&(!/lr/.test(args[2]))){ //Finally, value of lr is moved to pc
 			updatePC(4);
 		}
@@ -579,7 +579,7 @@ function cmp(){	               //----------------> working
 		var Rn = convertRegName.getItem(args[1]);
 		var Rd = "0000";				
 		instruction = dataProcess(I, Rn, Rd, operand2, "1010");
-		instrMem[instCount] = instruction;
+		instrMem[pcVal] = instruction;
 		updatePC(4);	
 		//-----------------------------
 		}		
