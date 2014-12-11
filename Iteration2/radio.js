@@ -33,7 +33,18 @@ function convert2hex(){
 
      convertRegisters(dec2hex);
      document.getElementById("stack").innerHTML =string1;
+     string5="";
+	var l=0;
+	while(l<instrMem.length-4){
+		
 
+		//num = dec2hex(j);
+		string5=string5+l+" : " + instrMem[l] + "\n";
+		l +=4;
+		
+	}
+		document.getElementById("Instr").innerHTML =string5;
+     //showInstMem();
 
 };
 //---------------------------------------------------------------------------------
@@ -52,8 +63,9 @@ function convert2decimal(){
 	
 	//copyReg = registers;
 	//convertRegisters(hex2dec);
-	showRegisters();
 
+	showRegisters();
+	//showInstMem();
      
 
 
@@ -76,6 +88,19 @@ function convert2binary(){
 	stack = copyStack;
 	string3=convertArray(stack,dec2bin);
 	     document.getElementById("stack").innerHTML =string3;
+
+	     string5="";
+	var l=0;
+	while(l<instrMem.length-4){
+		
+
+		//num = dec2hex(j);
+		string5=string5+l+" : " + instrMem[l] + "\n";
+		l +=4;
+		
+	}
+		document.getElementById("Instr").innerHTML =string5;
+	//showInstMem();     
 
 	//showRegisters();
 
