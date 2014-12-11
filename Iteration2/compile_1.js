@@ -131,6 +131,7 @@ function runCommand(command) {    //-------------> working
 	// let the handler of that object takes care of it 
 	obj.excec(args);
 	showRegisters();
+	//showInstMem();
 }
 
 /*--------------------------------------
@@ -202,7 +203,6 @@ function showRegisters(){     //-------------> working
 		document.getElementById("stack").innerHTML =string4;
 		copyStack = stack ;
 
-
 		string5="";
 	var l=0;
 	while(l<instrMem.length-4){
@@ -215,8 +215,10 @@ function showRegisters(){     //-------------> working
 	}
 		document.getElementById("Instr").innerHTML =string5;
 
+		
 
 };
+
 //----------------------------------------------------------------------------------------------------------
 function showCopyRegisters(){     //-------------> working
 
@@ -342,6 +344,8 @@ function initialize(){   //-------------> working
 	pcVal = 0;
 	var instIncrement = 0;
 	showRegisters();
+	//showInstMem();
+
 
 	
 
