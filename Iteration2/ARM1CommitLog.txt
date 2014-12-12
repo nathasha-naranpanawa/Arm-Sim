@@ -1,0 +1,235 @@
+
+dell@PC ~/Documents/Arm-Sim (master)
+$ git log
+commit d6469a18ab5cbc2066be30ee70782c66a1a4742a
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Fri Dec 12 16:35:21 2014 +0530
+
+    Final
+
+commit ec3bbeff1fbaeeab25cca6414773409bb76a2847
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Fri Dec 12 16:32:09 2014 +0530
+
+    Final
+
+commit b4ee8557d770cd1cc59bf1705c1dc8fd4ac42d48
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Thu Dec 11 08:46:21 2014 +0530
+
+    Incomplete instruction format for ldr. Completed instruction format for bran
+
+commit efeb1e515bbd65d02da16842ea298bd24c0a3e33
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Thu Dec 11 08:00:17 2014 +0530
+
+    Instruction memory display set to unchange when changing representation.
+
+commit 5db029c4ab6400e730b5e9cf51a25c46873d9c85
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Thu Dec 11 07:56:53 2014 +0530
+
+    Incomplete instruction format for ldr. Completed instruction format for bran
+
+commit 659e473f419a0ca4c7124e167cfef24062acd5b0
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Thu Dec 11 07:46:55 2014 +0530
+
+    Incomplete instruction format for ldr. Completed instruction format for bran
+
+commit 1d3e9ad7e3b66b058b6f91461e3a41792dd7868b
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Thu Dec 11 07:19:25 2014 +0530
+
+    Incomplete instruction format for ldr. Completed instruction format for bran
+
+commit 2bb8a08dd8df6284aec7295af346f2b123717231
+Author: Buddhi Wickramasinghe <bcwicki@gmail.com>
+Date:   Thu Dec 11 01:15:23 2014 +0530
+
+    Incomplete instruction format for ldr. Completed instruction format for bran
+
+commit 7a152140e17d9dcd0c71ed9ad025967902df7526
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Dec 9 22:20:19 2014 +0530
+
+    Step-by-Step button disabled after execution. Current Instruction window add
+
+commit 2487f3eeaaf2964c6b617400de9288403da09e95
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Dec 9 22:17:43 2014 +0530
+
+    current instruction string added.
+
+commit 173b9ab72e2858cf4d6ae258f3470220fb218ffb
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Dec 9 22:15:44 2014 +0530
+
+    Resetting instruction mem window. Show current instruction.
+
+commit 1ecdd515a88e8a0a756bd8cfc4b101ae3faa4fad
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Dec 9 19:34:29 2014 +0530
+
+    small changes
+
+commit 4431e448107f9ea18d669c9968bb11b7f9e9142a
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Dec 9 18:44:27 2014 +0530
+
+    array sizes made smaller
+
+commit 1078b08a5bfcb9f1380353fc5c9e6683d4ae12b2
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Dec 9 18:43:06 2014 +0530
+
+    instruction count indicator added
+
+commit ea47120f37c8ba6b0e5e5d5e3f942b76305f4a4b
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Dec 9 13:18:13 2014 +0530
+
+    functionality of radio buttons for representation changes
+
+commit 199f2b0e14cfa8b43991e9f8b0bd5db7678e75a2
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Dec 9 13:17:30 2014 +0530
+
+    js functions for converting data representations
+
+commit 03f706ab5e155afa86f755cef3734b949b363794
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Dec 9 13:16:18 2014 +0530
+
+    new scripts for js files added. Initialize button added(Not working yet)
+
+commit ddf921bce58bff862a9ed6f9ff6d2fc4f607cd5a
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Dec 9 13:14:54 2014 +0530
+
+    copies for stack array and registers hash created
+
+commit 39999e4897750d467650d274256d3595b5490c0c
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Dec 9 13:13:05 2014 +0530
+
+    r0 gets address of the data memory where the label is at
+
+commit 0f1d87d189f3e92030e3ba6a4a1ef53fb65b4e0f
+Merge: a134a69 dd604c2
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Dec 9 12:47:23 2014 +0530
+
+    Merge branch 'master' of https://github.com/nathashanaranpanawa/Arm-Sim
+
+commit dd604c20a7935b1457587e4db8955404f3580eab
+Author: Buddhi Wickramasinghe <bcwicki@gmail.com>
+Date:   Tue Dec 9 09:23:23 2014 +0530
+
+    Iteration 2. Incomplete instruction memory. Incomplete printf.
+
+commit a134a69c7a83acd29538fc1ea95175f07634edfa
+Merge: 7397f88 34405f5
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Wed Nov 26 19:36:20 2014 +0530
+
+    Merge branch 'master' of https://github.com/nathashanaranpanawa/Arm-Sim
+
+commit 34405f58cf6fe9adeeb38cd3dd700372ba49c115
+Author: Buddhi Wickramasinghe <bcwicki@gmail.com>
+Date:   Sun Nov 23 20:44:33 2014 +0530
+
+    Final php page for iteration 1
+
+commit 73457fbd3de1b5ac8421ccc62694610106742c04
+Author: Buddhi Wickramasinghe <bcwicki@gmail.com>
+Date:   Sun Nov 23 20:43:58 2014 +0530
+
+    Final html page for iteration 1
+
+commit 7397f8817fc613b5c37c502babd530b5db48336c
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Tue Nov 18 01:26:59 2014 +0530
+
+    CSS changed for FireFox compatibility
+
+commit 2a1dbda6e2b78590bb159133fc54667d083511ce
+Merge: bf69677 d7f4a23
+Author: Buddhi Wickramasinghe <bcwicki@gmail.com>
+Date:   Mon Nov 17 07:21:04 2014 +0530
+
+    Merge branch 'master' of https://github.com/nathashanaranpanawa/Arm-Sim
+
+    # By Nathasha Naranpanawa
+    # Via Nathasha Naranpanawa
+    * 'master' of https://github.com/nathashanaranpanawa/Arm-Sim:
+      Cleaned Ajax script
+      html with placeholders for textareas
+
+commit bf696776d1d5cbea39f597adb2fc96bfdd81cbe0
+Author: Buddhi Wickramasinghe <bcwicki@gmail.com>
+Date:   Mon Nov 17 00:07:25 2014 +0530
+
+    final php up to now without complete session code
+
+commit a9f26204bc92ea613042adf40839d04c3f57a579
+Author: Buddhi Wickramasinghe <bcwicki@gmail.com>
+Date:   Mon Nov 17 00:03:37 2014 +0530
+
+    Same as index.html
+
+commit 437bd827ea6a2510f818dc0eec3404d32bc1f52b
+Author: Buddhi Wickramasinghe <bcwicki@gmail.com>
+Date:   Mon Nov 17 00:01:38 2014 +0530
+
+    Final html page without complete session code
+
+commit d7f4a23f1811b8987c715c0420c848fe87177a83
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Fri Nov 14 05:35:26 2014 +0530
+
+    Cleaned Ajax script
+
+commit bc40803bdfff19fcf7841e5f33b8c02b21cfa691
+Merge: 16b87e0 447b0c7
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Thu Nov 13 23:16:20 2014 +0530
+
+    Merge branch 'master' of https://github.com/nathashanaranpanawa/Arm-Sim
+
+commit 16b87e01c37a29d427aaaf5a6bd8f6c7514fc76c
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Thu Nov 13 23:13:45 2014 +0530
+
+    html with placeholders for textareas
+
+commit 447b0c7946a95db15fe242692d34dd031c5d3df6
+Author: Buddhi Wickramasinghe <bcwicki@gmail.com>
+Date:   Thu Nov 13 17:01:14 2014 +0530
+
+    Arm language mode
+
+commit 32f83189fac4e2ede45c8a800e16343579176200
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Thu Nov 13 15:32:16 2014 +0530
+
+    Working web site without PHP session control
+
+commit f9108428d5a67c0f5fc7fb7eb76c770b0ad13133
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Thu Nov 13 15:29:36 2014 +0530
+
+    CSS style files
+
+commit 18d7ef51d36e8a56ba7d22ac763d979de0e5d689
+Author: Nathasha Naranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Thu Nov 13 15:29:12 2014 +0530
+
+    Ace editor javascripts
+
+commit d471eebf1a826779c2af48a006e12c1ec3abab16
+Author: nathashanaranpanawa <nathashanaranpanawa@gmail.com>
+Date:   Thu Nov 13 15:24:40 2014 +0530
+
+    Initial commit
+(END)
