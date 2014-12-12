@@ -253,7 +253,7 @@ function scanf(){
 
 }
 
-
+//-----------------------------------------------------------------------------------------
 
 //Returns true if branch is taken
 function cmp(){	               //----------------> working
@@ -414,21 +414,6 @@ function b(){   //------------------------> working
 
 }
 //----------------------------------------------------------------------------------------------------------------------------------
-
-//Instruction format for data processing instructions
-function dataProcess(I, Rn, Rd, operand2, opCode){  //------------------------> working
-
-	var cond = "1110";
-	var F = "00";
-	var opCode;
-	var S = "0";
-
-	var format = cond + F + I + opCode + S + Rn + Rd + operand2;
-	
-	return format;
-};
-//----------------------------------------------------------------------------------------------------------------------------------
-
 function mul(){	//------------------------> working
 
 	this.excec= function(args){

@@ -22,7 +22,7 @@ function lineByLine()
 		instrPointer[0] = "" ;
 		document.getElementById("StepByStep").disabled = true;
 		
-		alert("Compile first!!");
+		alert("Assemble first!!");
 				
 	}else{
 	
