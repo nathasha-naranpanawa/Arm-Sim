@@ -1,3 +1,4 @@
+//data structure
 function Hash()
 {
 	this.length = 0;
