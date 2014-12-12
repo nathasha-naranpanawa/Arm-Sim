@@ -108,124 +108,6 @@ function isString(val){
 };
 
 
-/*
-function fromRadio(){
-    if(document.getElementById("Hex").checked) {
-    	alert("in hex");
-    	var string1="";
-        //Change representation of Stack Memory Window
-        if(isInt(stack[0])){
-        	alert("in number");
-          	
-          	string1=convertArray(stack,dec2hex);
-				//document.getElementById("stack").innerHTML =string4;
-
-
-        }else if(isHex(stack[0])){
-        	alert("in hex2");
-            
-        }else if (isString(stack[0])){
-        		alert("in string");
-        		string1=convertArray(stack,str2hex);
-				//document.getElementById("stack").innerHTML =string4;
-        	
-        }else{
-        	alert("in bin");
-            string1=convertArray(stack,bin2hex);
-				//document.getElementById("stack").innerHTML =string4;
-        }
-
-
-        //Change representation of Registers value window
-        if(isInt(registers.getItem("sp"))){
-        	alert("in number");
-          	
-          	convertRegisters(dec2hex);
-				
-
-        }else if(isHex(registers.getItem("sp"))){
-        	alert("in hex2");
-            
-        }else if (isString(registers.getItem("sp"))){
-        		alert("in string");
-        		convertRegisters(str2hex);
-        	
-        }else{
-        	alert("in bin");
-            convertRegisters(bin2hex);
-        }
-
-        //changing Stack Memory Window Values
-        document.getElementById("stack").innerHTML =string1;
-
-    }else if(document.getElementById("Decimal").checked) {
-      //document.getElementById("memory").value = bin2dec("10101010");
-
-      alert("in decimal");
-
-        //Change representation of Stack Memory Window
-        if(isInt(stack[0])){
-        	alert("in number");
-          	
-          	
-
-
-
-        }else if(isHex(stack[0])){
-        	alert("in hex2");
-            string4=convertArray(stack,hex2dec);
-				//document.getElementById("stack").innerHTML =string4;
-
-        }else if (isString(stack[0])){
-        		alert("in string");
-        		string4=convertArray(stack,str2dec);
-				//document.getElementById("stack").innerHTML =string4;
-        	
-        }else{
-        	//alert("in bin");
-            string4=convertArray(stack,bin2dec);
-				//document.getElementById("stack").innerHTML =string4;
-        }
-        
-
-        //Change representation of Registers value window
-        if(isInt(registers.getItem("sp"))){
-        	alert("in number");
-          	
-          	
-				
-
-        }else if(isHex(registers.getItem("sp"))){
-        	alert("in hex2");
-        	convertRegisters(hex2dec);
-            
-        }else if (isString(registers.getItem("sp"))){
-        		alert("in string");
-        		convertRegisters(str2dec);
-        	
-        }else{
-        	alert("in bin");
-            convertRegisters(bin2dec);
-        }
-
-        document.getElementById("stack").innerHTML =string4;
-
-
-
-
-
-      
-    }else if(document.getElementById("Binary").checked) {
-      //document.getElementById("memory").value = hex2bin("0xffd2");
-    }else{
-        alert("Click Something to convert");
-    }
-
-
-
-};
-*/
-
 function convertArray(array,method){	//convert(stack,dec2hex)
 
 	string="";
@@ -280,9 +162,6 @@ function copyRegisters(){
         copyReg.setItem("lr",registers.getItem("lr")) ;
         copyReg.setItem("pc",registers.getItem("pc")) ;
         return copyReg;
-
-
-
 
 }
 

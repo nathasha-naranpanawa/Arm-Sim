@@ -3,7 +3,6 @@ Problems: when there are tabs in blank lines
 		  Comments starting with tab or space
 */
 
-
 var lineNum; //Stores the current line number
 var codeLines;  //Stores all the commands as an array
 var state = 0;  //Stores state regarding the current line to be executed
@@ -12,9 +11,20 @@ var pcVal = 0;
 var instCount = 0; //Keeps track of the number of instructions executed
 var currentInstruction="";
 var instIncrement = 0;
+var indexMem = 0;
+var indexLine =0;
 
 function lineByLine()
 {
+	
+	if (instrMem[0]=="00000000000000000000000000000000"){
+		initialize();
+		instrPointer[0] = "" ;
+		document.getElementById("StepByStep").disabled = true;
+		
+		alert("Compile first!!");
+				
+	}else{
 	
 	//Storing code lines in an array
 	var editorContent=editor.getValue();
@@ -28,19 +38,11 @@ function lineByLine()
 	getLabels(codeLines); 
 	getOperations();
 	getinstAddresses();
-	//putLabels();
-	
+
 	startLine = checkForLabel(/main:/) + 1;  //Execution should be started from the line following main
 	var i = startLine+state;
 	
-	//------------------
-	//updatePC();
-	//------------------
-	
 		var commentTest = (/@/.test(codeLines[i].charAt(0))); //Checking for comments
-		//var textTest = (/.text/.test( codeLines[i]));  //checking for .text keyword 
-		//var globalTest = /.global/.test( codeLines[i]); //checking for .global keyword
-		//var mainTest = /main:/.test( codeLines[i]); //checking for main: label -------> Just for now!! should change later!!!!
 		var labelTest = labels.hasItem(codeLines[i]); 
 		
 		//Lines that can't be compiled
@@ -63,61 +65,21 @@ function lineByLine()
 		if(splitLine.length>4){
 			splitLine = splitLine.slice(0, 4); //When there are comments at the end of a code line
 		}
-			
-		//Removing # from immediate values 
-		for(var j=0;j<splitLine.length;j++){
-			if (/#/.test(splitLine[j])){
-				var temp = splitLine[j].split("#").filter(Boolean);
-				splitLine.splice(j, 1, temp[0]);
-			}
-		}
 		
-		//Removing [ and ] in ldr and str 
-		for(var j=0;j<splitLine.length;j++){
-			if (/\]/.test(splitLine[j])){
-				var temp = splitLine[j].split("]").filter(Boolean);
-				splitLine.splice(j, 1, temp[0]);
-					
-			}else if(/\[/.test(splitLine[j])){				
-				var temp = splitLine[j].split("[").filter(Boolean);
-				splitLine.splice(j, 1, temp[0]);	
-			}	
-		}
 		
-		//Function to simulate the code 
-		copyEditor(splitLine);
+		noSpecialChars(splitLine);
+		runCommand(splitLine);
 		instCount+=1; //number of instructions executed
-		//alert(instCount);
+		
 		document.getElementById("inst").value =  instCount;
 		state+=1;
 		instIncrement+=4;
-		
+		indexLine +=1;
+
+		}
 }
 
 
-
-
-//var instest=['sub	,sp, sp, 4','str	,lr, sp, 0','mov 	,r5,129','ldr	,r0, =hello','	mov     ,r1,r5','bl  	,printf','ldr	,lr, [sp, #0]','add	,sp, sp, #4','mov	,pc, lr'];
-
-
-//var commands = new Hash('exfunction',new exfunction());
-
-function copyEditor(command){    //-------------> working
-
-	runCommand(command);
-	//var obj=new printf();
-	//obj.excec();
-	//runCommand(instest[5]);
-	//runCommand(instest[2]);
-	//runCommand(instest[4]);
-	
-	//document.getElementById("outputText").innerHTML =registers.getItem('r1');	
-	//document.getElementById("outputText").innerHTML =isInt('sdfdsf');	
-	
-
-		document.getElementById("formContent").innerHTML =  editor.getValue();
-		
-}
 //------------------------------------------------------
 function runCommand(command) {    //-------------> working
 	var args=command;
@@ -125,43 +87,11 @@ function runCommand(command) {    //-------------> working
 	if(/beq/.test(args[0])||/bne/.test(args[0])||/bgt/.test(args[0])||/blt/.test(args[0])||/bge/.test(args[0])||/ble/.test(args[0])){
 		args.splice(0, 1, "branch");  //All conditional branch commands are handled by branch() method
 	}
-	var obj = commands.getItem(args[0]);
-	//args.shift();
-	//var obj = new exfunction();
-	// let the handler of that object takes care of it 
+	var obj = commands.getItem(args[0]); 
 	obj.excec(args);
 	showRegisters();
-	//showInstMem();
 }
 
-/*--------------------------------------
-function runCommand(command) {
-	
-	var args=sepCmd(command);
-	document.getElementById("outputText").innerHTML =args;	
-	var obj = commands.getItem(args[0]);
-	
-	args.shift();	//remove first element from the args array
-	document.getElementById("outputText").innerHTML =args;
-	// let the handler of that object takes care of it 
-	obj.excec(args);
-	//obj.excec();
-
-}
-*/
-//----------------------------------------------------------------------------------------------------------
-/*function sepCmd(strCmd){
-	var dataArray=strCmd.split(',');
-		var texts = [];
-		for (var i=0; i < dataArray.length; i++) {
-		  // only push this line if it contains a non whitespace character.
-		  if (/\S/.test(dataArray[i])) {
-			texts.push($.trim(dataArray[i]));
-		  }
-		}
-	return texts;
-
-}*/
 //----------------------------------------------------------------------------------------------------------
 function showRegisters(){     //-------------> working
 
@@ -172,30 +102,19 @@ function showRegisters(){     //-------------> working
 	}
 	document.getElementById("outputregisters").innerHTML =string;	
 
-	/*var address=['0x000000','0x000018','0x000024'];
-	var string2="";
-	for(j=0;j<addr.length;j++){
-		string2=string2+address[j]+" = "+addr.getItem(address[j])+"\n";
-	}
-	document.getElementById("memory").innerHTML =string2;
-*/
-	//var mem=newFilledArray(1000, 4);
-
 	string3="";
-	for(j=0;j<memory.length;j++){
+	var j=0;
+	while(j<memory.length-4){
 
-		//num = dec2hex(j);
 		string3=string3+dec2hex(j)+" : " + memory[j] + "\n";
-		
+		j+=4;
 	}
 		document.getElementById("memory").innerHTML =string3;
 
 		string4="";
 	var k=0;
 	while(k<stack.length-4){
-		
 
-		//num = dec2hex(j);
 		string4=string4+dec2hex(k)+" : " + stack[k]+ "\n";
 		k +=4;
 		
@@ -203,22 +122,29 @@ function showRegisters(){     //-------------> working
 		document.getElementById("stack").innerHTML =string4;
 		copyStack = stack ;
 
+
 		string5="";
 	var l=0;
 	while(l<instrMem.length-4){
-		
 
-		//num = dec2hex(j);
 		string5=string5+l+" : " + instrMem[l] + "\n";
 		l +=4;
 		
 	}
 		document.getElementById("Instr").innerHTML =string5;
 
+			string6="";
+	var q=0;
+	while(q<instrPointer.length-4){
+
+		string6=string6+ instrPointer[q] + "\n";
+		q +=4;
 		
+	}
+		document.getElementById("indicator").innerHTML =string6;
+
 
 };
-
 //----------------------------------------------------------------------------------------------------------
 function showCopyRegisters(){     //-------------> working
 
@@ -229,12 +155,9 @@ function showCopyRegisters(){     //-------------> working
 	}
 	document.getElementById("outputregisters").innerHTML =string;	
 
-	
-
 	string3="";
 	for(j=0;j<memory.length;j++){
 
-		//num = dec2hex(j);
 		string3=string3+dec2hex(j)+" : " + memory[j] + "\n";
 		
 	}
@@ -243,9 +166,7 @@ function showCopyRegisters(){     //-------------> working
 		string4="";
 	var k=0;
 	while(k<stack.length-4){
-		
-
-		//num = dec2hex(j);
+	
 		string4=string4+dec2hex(k)+" : " + stack[k] + "\n";
 		k +=4;
 		
@@ -256,14 +177,22 @@ function showCopyRegisters(){     //-------------> working
 		string5="";
 	var l=0;
 	while(l<instrMem.length-4){
-		
 
-		//num = dec2hex(j);
 		string5=string5+l+" : " + instrMem[l] + "\n";
 		l +=1;
 		
 	}
 		document.getElementById("Instr").innerHTML =string5;
+
+				string6="";
+	var q=0;
+	while(q<instrPointer.length-4){
+	
+		string6=string6+ instrPointer[q] + "\n";
+		q +=4;
+		
+	}
+		document.getElementById("indicator").innerHTML =string6;
 
 
 };	
@@ -279,18 +208,13 @@ function getLabels(codes){   //-----------> working
 
 		if(/:/.test( codes[i]) && !(/@/.test(codes[i]))){
 			labels.setItem(codes[i],i);
-			//alert(codes[i]);
+			
 			var dataline = codes[i].split(/"([^"]+)"/);
-			//alert(dataline[0]);
 
 			var key = dataline[0].split(":");
-			//alert("="+key[0]);
-			//alert(dataline[1]);
+			
 			dataLabels.setItem("="+key[0],dataline[1]);
-
-
-
-			//alert("done");
+			
 		}	
 	}
 }
@@ -302,13 +226,11 @@ function initialize(){   //-------------> working
 	instCount =0;
 	document.getElementById("inst").value =  instCount;
 	document.getElementById("currentInstr").value =  "";
-	document.getElementById("outputText").value = "";
-		document.getElementById("inputs").value = "";
-	//document.getElementById("Hex").reset();
-	//document.getElementById("Decimal").reset();
-	//document.getElementById("Binary").reset();
-
+	document.getElementById("outputText").value =  "";
+	document.getElementById("inputs").value =  "";
+	
 	var num = 0;
+	index=0;
 	
 	registers.setItem('r0',num);
 	registers.setItem('r1',num);
@@ -339,28 +261,22 @@ function initialize(){   //-------------> working
 		instrMem[p] = "00000000000000000000000000000000" ;
 	}
 
+	for(q=0;q<instrPointer.length;q++){
+		instrPointer[q] = "" ;
+	}
+
 	state = 0;
 	cmpResult = 0;
 	pcVal = 0;
 	var instIncrement = 0;
+	indexMem = 0;
+	indexLine = 0;
+	countmem = 0;
 	showRegisters();
-	//showInstMem();
 
-
-	
-
-	/*var initAddr = 00;
-
-	addr.setItem('0x000000',initAddr);
-	addr.setItem('0x000018',initAddr);
-	addr.setItem('0x000024',initAddr);
-
-	showAddress();
-	*/
 }
 
 //----------------------------------------------------------------------------------------------------------
-
 //Puts operations in each command in a hashmap along with their line numbers
 function getOperations(){    //-------------> working
 
@@ -377,7 +293,6 @@ for(var i=0; i<count; i++){
 		if(!(commentTest||textTest||globalTest||mainTest||!codeLines[i]||labelTest)){ //(!codeLines[i]) check if the line is blank
 
 			var splitLine = codeLines[i].split(/[ ,\t]+/).filter(Boolean); //-----> working. filter(Boolean) removes null values
-			
 			functionsHash.setItem(i, splitLine[0]); //Store function names with their line numbers
 			
 		}
@@ -464,7 +379,7 @@ function isString(val){
 
 function str2hex(str){
 var hex, i;
-var str = "\u6f22\u5b57"; // "\u6f22\u5b57" === "漢字"
+//var str = "\u6f22\u5b57"; // "\u6f22\u5b57" === "漢字"
 var result = "";
 for (i=0; i<str.length; i++) {
   hex = str.charCodeAt(i).toString(16);
@@ -472,51 +387,7 @@ for (i=0; i<str.length; i++) {
 }
 };
 
-function fromRadio(){
-    if(document.getElementById("Hex").checked) {
-    	alert("in hex");
-        //document.getElementById("memory").value = bin2hex("1111111111010010");
 
-        if(isInt(stack[0])){
-        	alert("in number");
-           
-            string4="";
-			var k=0;
-			while(k<stack.length-4){
-				string4=string4+dec2hex(k)+" : " + dec2hex(stack[k]) + "\n";
-				k +=4;
-				
-			}
-				document.getElementById("stack").innerHTML =string4;
-
-        }else if(isHex(stack[0])){
-        	alert("in hex2");
-            for(i=0;i<stack.length;i++){
-                 (stack[i]);
-            }
-        }else if (isString(stack[0])){
-        		alert("in string");
-
-        		for(i=0;i<stack.length;i++){
-                 str2hex(stack[i]);
-            }
-        }else{
-        	alert("in bin");
-            for(i=0;i<stack.length;i++){
-                 bin2hex(stack[i]);
-            }
-        }
-        
-    }else if(document.getElementById("Decimal").checked) {
-      //document.getElementById("memory").value = bin2dec("10101010");
-      
-    }else if(document.getElementById("Binary").checked) {
-      //document.getElementById("memory").value = hex2bin("0xffd2");
-    }
-
-
-
-};
 
 //----------------------------------------------------------------------------------
 function updatePC(a){
@@ -551,27 +422,272 @@ for(var i=0; i<count; i++){
 		}
 	}	
 }
+//----------------------------------------------------------------------------------
 
 //Function to get the next command to be executed from the current position
 function findNextCommand(position){      //-------------> working
 
 	for(var i=position; i<codeLines.length; i++){
 
-		var commentTest = (/@/.test(codeLines[i].charAt(0))); //Checking for comments
-		//var textTest = (/.text/.test( codeLines[i]));  //checking for .text keyword 
-		//var globalTest = /.global/.test( codeLines[i]); //checking for .global keyword
-		var mainTest = /main:/.test( codeLines[i]); //checking for main: label -------> Just for now!! should change later!!!!
+		var commentTest = (/@/.test(codeLines[i].charAt(0))); //Checking for comments		
 		var labelTest = labels.hasItem(codeLines[i]); 
 	
-		if(!(commentTest||mainTest||!codeLines[i]||labelTest)){ //(!codeLines[i]) check if the line is blank
-			return i;
-			//return codeLines[i];
+		if(!(commentTest||!codeLines[i]||labelTest)){ //(!codeLines[i]) check if the line is blank
+			return i;			
+		}	
+	}
+}
+//----------------------------------------------------------------------------------
+
+//Function to put all the instructions to instruction memory at the beginning
+function fillInstMem(){
+	document.getElementById("StepByStep").disabled = false;
+	document.getElementById("outputText").value = "";
+	document.getElementById("inputs").value = "";
+	//Storing code lines in an array
+	var editorContent=editor.getValue();
+	codeLines = editorContent.split("\n");
+	
+	//Remove white spaces at the beginning and end of a codeLines
+	for(var i=0; i<codeLines.length; i++){
+		codeLines.splice(i, 1, codeLines[i].trim());
+	}	
+	
+	getLabels(codeLines); 
+	getOperations();
+	getinstAddresses();
+	
+	var instruction;
+	var lineNum1;
+	
+	for(var i=0; i<codeLines.length; i++){
+		
+	var commentTest = (/@/.test(codeLines[i].charAt(0))); //Checking for comments
+	var textTest = (/.text/.test( codeLines[i]));  //checking for .text keyword 
+	var globalTest = /.global/.test( codeLines[i]); //checking for .global keyword
+	var labelTest = labels.hasItem(codeLines[i]); 
+		
+	if(!(commentTest||!codeLines[i]||labelTest||textTest||globalTest)){
+	
+		//Split one line of code
+		var splitLine = codeLines[i].split(/[ ,\t]+/).filter(Boolean); //-----> working. filter(Boolean) removes null values
+		
+		lineNum1 = i;
+			
+		if(splitLine.length>4){
+			splitLine = splitLine.slice(0, 4); //When there are comments at the end of a code line
+		}
+			
+		noSpecialChars(splitLine);
+		
+		var args = splitLine;
+	
+		//Writing instruction formats for different instructions
+		if((/add/.test(args[0]))||(/sub/.test(args[0]))){
+			
+			if(isInt(args[3])){
+		
+				var operand2 = signExtend(immediateToBin(args[3]),12);
+				var I = "1";
+			}
+			else{
+				
+				var operand2 = signExtend(convertRegName.getItem(args[3]),12);
+				var I = "0";
+				
+			}
+				var Rn = convertRegName.getItem(args[2]);
+				var Rd = convertRegName.getItem(args[1]);
+	
+			if(/add/.test(args[0])){
+				var opCode = "0100";
+			}else{
+				var opCode = "0010";
+			}	
+			
+			instruction = dataProcess(I, Rn, Rd, operand2, opCode);				
+			instrMem[indexMem] = instruction;
+				
+		}
+		else if(/mov/.test(args[0])){
+		
+			if(isRegForMov(args)){
+			
+				var operand2 = signExtend(convertRegName.getItem(args[2]),12);
+				var I = "0";
+
+			}
+			else{
+			
+				var operand2 = signExtend(immediateToBin(args[2]),12);
+				var I = "1";
+	
+			}
+
+			var Rd = convertRegName.getItem(args[1]);
+			var Rn = "0000";
+			instruction = dataProcess(I, Rn, Rd, operand2, "1101")
+			instrMem[indexMem] = instruction;
+				
+		}
+		else if(/cmp/.test(args[0])){
+		
+			if(args.length<4){		
+				if(isInt(args[2])){	
+					secondOp = parseInt(args[2]);
+				
+					var operand2 = signExtend(immediateToBin(args[2]),12);
+					var I = "1";
+				
+				}else{
+					secondOp = registers.getItem(args[2]);
+			
+					var operand2 = signExtend(convertRegName.getItem(args[2]),12);
+					var I = "0";			
+				}
+				
+				var Rn = convertRegName.getItem(args[1]);
+				var Rd = "0000";	
+				
+				instruction = dataProcess(I, Rn, Rd, operand2, "1010");
+				instrMem[indexMem] = instruction;	
+					
+			}				
+		}
+		else if(/str/.test(args[0])){
+		
+			var Rn = convertRegName.getItem(args[1]);
+			var Rd = convertRegName.getItem(args[2]);
+			var operand2 = signExtend(immediateToBin(args[3]),12);
+				
+			instruction = dataTrans(Rn, Rd, operand2, "011001");
+			instrMem[indexMem] = instruction;
+			
+		
+		}else if(/ldr/.test(args[0])){
+			var countmem;
+			
+			if(isReg(args)){
+	
+				var Rn = convertRegName.getItem(args[2]);
+				var Rd = convertRegName.getItem(args[1]);
+				var operand2 = signExtend(immediateToBin(args[3]),12);
+			
+			}else{
+							
+				var ldrAddr = indexMem;
+				var count1=indexMem;
+				while(!dataLabels.hasItem(args[2])){   //Find the address of the data label
+					count1+=4; 
+				}
+							
+				var destAddr = count1;
+				var offset =(destAddr-ldrAddr-8)/4;
+				var operand2 = signExtend(dec2bin(offset).toString(), 12);
+				var Rn = convertRegName.getItem('pc');
+				var Rd = convertRegName.getItem(args[1]);	
+			
+			}
+		
+				instruction = dataTrans(Rn, Rd, operand2, "011000");
+				instrMem[indexMem] = instruction;
+				
+		}
+		else if(/beq/.test(args[0])||/bne/.test(args[0])||/bgt/.test(args[0])||/blt/.test(args[0])||/bge/.test(args[0])||/ble/.test(args[0])){
+			
+			var cond;
+		
+			if(/^beq$/.test(functionsHash.getItem(lineNum1))){
+				cond = "0000";
+			}else if(/^bne$/.test(functionsHash.getItem(lineNum1))){
+				cond = "0001";
+			}else if(/^bgt$/.test(functionsHash.getItem(lineNum1))){
+				cond = "1100";
+			}else if(/^blt$/.test(functionsHash.getItem(lineNum1))){
+				cond = "1011";
+			}else if(/^bge$/.test(functionsHash.getItem(lineNum1))){
+				cond = "1010";
+			}else if(/^ble$/.test(functionsHash.getItem(lineNum1))){
+				cond = "1101";
+			}
+		
+			var instruction = branchFormat(cond, "0", "1", args[1]);
+			instrMem[indexMem] = instruction;
+			
+		
+		}
+		else if(/bl/.test(args[0])){		
+			instrMem[indexMem] = "00000000000000000000000000000000";		
+		}
+		else if(/b/.test(args[0])){
+			
+			var instruction = branchFormat("1110", "0", "1", args[1]);
+			instrMem[indexMem] = instruction;
+				
+		}
+		else if(/mul/.test(args[0])){
+		
+			var Rs = convertRegName.getItem(args[2]);
+			var Rm = convertRegName.getItem(args[3]);
+			var Rd = convertRegName.getItem(args[1]);
+			
+			instruction = mulFormat(Rd, Rs, Rm);
+			instrMem[indexMem] = instruction;
 			
 		}
+		
+		indexMem+=4;
 	
+		}
+		
+		showRegisters();
 	
 	}
-
 }
+
+function noSpecialChars(Sarray){
+
+	//Removing # from immediate values 
+	for(var j=0;j<Sarray.length;j++){
+		if (/#/.test(Sarray[j])){
+			var temp = Sarray[j].split("#").filter(Boolean);
+			Sarray.splice(j, 1, temp[0]);
+		}
+	}
+		
+	//Removing [ and ] in ldr and str 
+	for(var j=0;j<Sarray.length;j++){
+		if (/\]/.test(Sarray[j])){
+			var temp = Sarray[j].split("]").filter(Boolean);
+			Sarray.splice(j, 1, temp[0]);
+					
+	}else if(/\[/.test(Sarray[j])){				
+			var temp = Sarray[j].split("[").filter(Boolean);
+			Sarray.splice(j, 1, temp[0]);	
+		}	
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

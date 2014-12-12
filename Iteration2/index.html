@@ -7,6 +7,9 @@
 <link rel="stylesheet" href="loadfile.css">
 <link rel="stylesheet" href="browse.css">
 <style>
+p {
+    display: inline;
+}
 input[type=button]:disabled {
 	border-color: #707070;
     background: #707070;
@@ -26,15 +29,15 @@ input[type=button]:disabled {
 				<textarea name = "formContent" id = "formContent" style="display:none;"></textarea>
 				<input type="submit"  name="submit" value="Run" id = "submit" class="btn btn-primary" onClick = "getEditorContent()">
 					<input type="button" onclick="resetEditor()" id="Reset" class="btn btn-primary" name="Reset" value="Reset"></td>	
-				
+					
 					
 	</tr>
 	<tr>
 		<td colspan="3">
 			<div id="inputTextToSave" value="savethistext" style="width:630px;height:450px"></div>
 		</td>
-		<td><div><textarea readonly name ="outputText" id ="outputText" style="width:430px;height:325px;border: 2px solid #428bca" placeholder = "Output here..."></textarea><br>
-				 <textarea name="inputs" id="inputs" style="width:430px;height:100px;border: 2px solid #428bca" placeholder = "Input your values here..."></textarea></div>
+		<td><div><textarea readonly name ="outputText" id ="outputText" style="width:450px;height:325px;border: 2px solid #428bca" placeholder = "Output here..."></textarea><br>
+				 <textarea name="inputs" id="inputs" style="width:450px;height:100px;border: 2px solid #428bca" placeholder = "Input your values here..."></textarea></div>
 		</td>
 		
 		</form>
@@ -44,15 +47,21 @@ input[type=button]:disabled {
 		
 		<td><input type="file" class="custom-file-input" id="fileToLoad">
 		<td><input type ="button" onclick="loadFileAsText()" class="btn btn-primary" name="Upload File" value="Upload File">
-		<td><input type="button" onclick="lineByLine()" id="StepByStep" class="btn btn-primary" name="StepByStep" value="Step by step"></td>
+		<td><input type="button" onclick="fillInstMem()" id="instMem" class="btn btn-primary" name="instMem" value="Assemble">
+		<input type="button" onclick="resetRegsnMem()" id="Initialize" class="btn btn-primary" name="Initialize" value="Initialize">
+		</td>
 			
 
-				<td><label for="inst">Instruction Count</label>
+				<td>
+				<input type="button" onclick="lineByLine()" id="StepByStep" class="btn btn-primary" name="StepByStep" value="Step by step">
+				<label for="inst">Instruction Count</label>
 				<input type="text" name="inst" id="inst" style="width:20px;height:20px;border-radius:5px">	
 				<input type="radio" name="format" value="Hex" id="Hex"  onClick="convert2hex()">Hex
 				<input type="radio" name="format" value="Decimal"  id="Decimal"  checked onClick="convert2decimal()">Decimal
 				<input type="radio" name="format" value="Binary" id="Binary" onClick="convert2binary()">Binary
-				<input type="button" onclick="resetRegsnMem()" id="Initialize" class="btn btn-primary" name="Initialize" value="Initialize">
+				
+				
+				</td>	
 				
 					
        			 
@@ -76,17 +85,22 @@ input[type=button]:disabled {
 			<textarea name="stack" id="stack" style="width:200px;height:440px;border: 2px solid #428bca" placeholder = "Stack memory shown here..."></textarea>
 			</fieldset>
 		</td>
-		<td>
-			<fieldset>
-			<legend>Instruction memory</legend>
-			<textarea name="Instr" id="Instr" style="width:400px;height:380px;border: 2px solid #428bca" placeholder = "Instruction memory shown here..."></textarea>
-			</fieldset>
 		
-			<fieldset>
+		<td>
+			<fieldset style="width:300px">
+				<legend>Instruction memory</legend>
+				<table>
+			
+			<td><textarea name="indicator" id="indicator" style="width:20px;height:390px;border: 2px solid #ffffff" ></textarea></td>
+			<td><textarea  readonly name="Instr" id="Instr" style="width:350px;height:390px;border: 2px solid #428bca" placeholder = "Instruction memory shown here..."></textarea></td>
+				</table>
+			</fieldset>
+			<fieldset style="width:400px">
 			<legend>Current Instruction</legend>
-			<textarea name="currentInstr" id="currentInstr" style="width:400px;height:20px;border: 2px solid #428bca" placeholder = "Current Instruction shown here..."></textarea>
+			<textarea name="currentInstr" id="currentInstr" style="width:400px;height:15px;border: 2px solid #428bca" placeholder = "Current Instruction shown here..."></textarea>
 			</fieldset>
 		</td>
+		
 	</tr>
 	
 </table>
@@ -147,6 +161,7 @@ function loadFileAsText()
 } 
 		var textFromFileLoaded = fileLoadedEvent.target.result;
 		editor.setValue(textFromFileLoaded);
+		
 	};
 	fileReader.readAsText(fileToLoad, "UTF-8");
 	
@@ -154,34 +169,6 @@ function loadFileAsText()
 }
 
 </script>
-
-<!--s<script type='text/javascript'>
-function lineByLine()
-{
-
-	//Storing code lines in an array
-	var editorContent=editor.getValue();
-	var codeLines = editorContent.split("\n");
-	//alert("okay");
-    /*if(/mov/.test(tt))
-	{
-		alert(/#[0-9]+/.exec(tt));
-	}*/
-	  
-	var lineNumber = 6; 
-	for(var i=0; i<lineNumber; i++){
-		//document.getElementById("outputText").innerHTML = codeLines[2];
-		alert(codeLines[i]);
-	}
-	
-	
-	
-	
-	
-}
-</script>-->
-
-
 
 </body>
 </html>
